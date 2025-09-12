@@ -1,3 +1,4 @@
+// FIX: Implemented the central type definitions for the application.
 export enum LetterStatus {
   Correct = 'correct',
   Present = 'present',
@@ -10,6 +11,24 @@ export interface Guess {
   statuses: LetterStatus[];
 }
 
+export type GameMode = 'daily' | 'practice';
+export type GameState = 'playing' | 'won' | 'lost';
+
+export interface WordWithDefinition {
+  word: string;
+  definition: string;
+}
+
+export type AppTheme = 'light' | 'dark' | 'system';
+export type Language = 'tr' | 'en' | 'ar';
+
+export interface AppSettings {
+  wordLength: number;
+  language: Language;
+  theme: AppTheme;
+  hapticsEnabled: boolean;
+}
+
 export interface GameStats {
   gamesPlayed: number;
   gamesWon: number;
@@ -18,22 +37,9 @@ export interface GameStats {
   guessDistribution: { [key: number]: number };
 }
 
-export type AppTheme = 'light' | 'dark' | 'system';
-
-export interface AppSettings {
-  theme: AppTheme;
-  language: 'tr' | 'en' | 'ar';
-  wordLength: number;
-  hapticsEnabled: boolean;
-}
-
-export type GameMode = 'daily' | 'practice';
-
-export type GameState = 'playing' | 'won' | 'lost';
-
 export interface DailyChallengeState {
-  solution: string;
-  date: string; // YYYY-MM-DD
+  solution: WordWithDefinition;
   guesses: Guess[];
   gameState: GameState;
+  date: string;
 }

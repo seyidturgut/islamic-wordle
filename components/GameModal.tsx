@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { useSettings } from '../src/hooks/useSettings.ts';
 import { useFocusTrap } from '../src/hooks/useFocusTrap.ts';
@@ -6,10 +7,12 @@ interface GameModalProps {
   isOpen: boolean;
   isWin: boolean;
   solution: string;
+  solutionDefinition: string;
   onPlayAgain: () => void;
 }
 
-export const GameModal: React.FC<GameModalProps> = ({ isOpen, isWin, solution, onPlayAgain }) => {
+export const GameModal: React.FC<GameModalProps> = ({ isOpen, isWin, solution, solutionDefinition, onPlayAgain }) => {
+  // FIX: The `useSettings` hook now provides the `t` function.
   const { t } = useSettings();
   const [isBouncing, setIsBouncing] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -35,8 +38,11 @@ export const GameModal: React.FC<GameModalProps> = ({ isOpen, isWin, solution, o
         <h2 id="game-modal-title" className="text-2xl md:text-3xl font-bold mb-4">
           {isWin ? t('modalWinTitle') : t('modalLossTitle')}
         </h2>
-        <p className="mb-2 text-lg">{t('modalSolutionIs')}</p>
-        <p className="text-2xl font-bold uppercase tracking-widest text-emerald-400 mb-6">{solution}</p>
+        <div className="mb-6">
+            <p className="mb-2 text-lg">{t('modalSolutionIs')}</p>
+            <p className="text-2xl font-bold uppercase tracking-widest text-emerald-400">{solution}</p>
+            {isWin && <p className="mt-2 text-base text-gray-300">{solutionDefinition}</p>}
+        </div>
         <button
           onClick={handleClick}
           className={`bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-800 ${isBouncing ? 'animate-bounce-short' : ''}`}

@@ -1,14 +1,56 @@
+import { WordWithDefinition } from "../types";
+
 // Seed data for offline fallback.
-// In a real application, this would contain >= 300 words.
-// All words must be 5 letters long.
-// FIX: The word list has been filtered to ensure all words are exactly 5 letters long, as required by the game's rules. Words with incorrect lengths have been removed.
-export const tr_core: string[] = [
-  "NAMAZ", "SEVAP", "SABIR", "ŞÜKÜR", "HELAL", "KADİR", "MEKKE",
-  "SALAT", "ZEKAT", "KIBLE", "TÖVBE", "MELEK", "KADER",
-  "HİCRİ", "İHLAS", "RAHİM", "RESUL", "VAHİY", "BERAT", "MİRAÇ",
-  "NİYET", "FITRE", "ZİKİR", "SECDE", "İMSAK", "İFTAR", "SAHUR",
-  "HUTBE", "HADİS", "FIKIH", "KERİM", "HAKİM", "VEDUD", "ŞEHİD",
-  "GAFUR", "SAMED", "VAHİD", "GÖNÜL", "SAYGI", "HUZUR", "MERVE",
-  "TAVAF", "İHRAM", "İNZAL", "KİTAP", "SUHUF", "VACİP", "HARAM",
-  "İSLAM", "İHSAN"
+// FIX: The word list has been updated to the new structure including definitions.
+export const tr_core: WordWithDefinition[] = [
+  { word: "NAMAZ", definition: "İslam'ın beş şartından biri olan, belirli hareket ve dualardan oluşan ibadet." },
+  { word: "SEVAP", definition: "Allah'ın rızasını kazanmak için yapılan iyi işler karşılığında verilen manevi ödül." },
+  { word: "SABIR", definition: "Zorluklar ve sıkıntılar karşısında metanet gösterme, şikayet etmeme erdemi." },
+  { word: "ŞÜKÜR", definition: "Verilen nimetlere karşı minnettarlığı ve teşekkürü ifade etme." },
+  { word: "HELAL", definition: "İslam dinine göre yapılması veya yenilip içilmesi yasak olmayan, serbest olan şeyler." },
+  { word: "KADİR", definition: "Her şeye gücü yeten, kudretli anlamına gelen Allah'ın isimlerinden biri." },
+  { word: "MEKKE", definition: "Hz. Muhammed'in doğduğu, Kâbe'nin bulunduğu ve Müslümanların kıblesi olan kutsal şehir." },
+  { word: "SALAT", definition: "Namaz, dua anlamına gelen ve İslam'ın temel direklerinden olan ibadet." },
+  { word: "ZEKAT", definition: "Zengin Müslümanların yılda bir kez malının belirli bir miktarını ihtiyaç sahiplerine vermesi." },
+  { word: "KIBLE", definition: "Müslümanların namaz kılarken yöneldikleri Kâbe'nin bulunduğu taraf." },
+  { word: "TÖVBE", definition: "İşlenen bir günahtan dolayı pişmanlık duyup Allah'tan af dileme." },
+  { word: "MELEK", definition: "Allah'ın nurdan yarattığı, günah işlemeyen ve O'nun emirlerini yerine getiren varlıklar." },
+  { word: "KADER", definition: "Allah'ın, olacak her şeyi önceden bilip takdir etmesi." },
+  { word: "HİCRİ", definition: "Hz. Muhammed'in Mekke'den Medine'ye göçünü başlangıç kabul eden takvim." },
+  { word: "İHLAS", definition: "İbadetleri ve iyi işleri sadece Allah rızası için, samimiyetle yapma." },
+  { word: "RAHİM", definition: "Çok merhametli, acıyan anlamına gelen Allah'ın isimlerinden biri." },
+  { word: "RESUL", definition: "Allah tarafından yeni bir kitap ve din ile gönderilen peygamber." },
+  { word: "VAHİY", definition: "Allah'ın, emir ve yasaklarını peygamberlerine bildirmesi." },
+  { word: "BERAT", definition: "Günahlardan arınma, temize çıkma anlamına gelen mübarek gece." },
+  { word: "MİRAÇ", definition: "Hz. Muhammed'in göğe yükselerek Allah'ın huzuruna kabul edilmesi mucizesi." },
+  { word: "NİYET", definition: "Bir işi yapmaya karar verme, kalben o işe yönelme." },
+  { word: "FITRE", definition: "Ramazan ayında, bayramdan önce ihtiyaç sahiplerine verilen sadaka." },
+  { word: "ZİKİR", definition: "Allah'ı anmak, O'nun isimlerini ve sıfatlarını tekrarlamak." },
+  { word: "SECDE", definition: "Namazda alnı, burnu, elleri, dizleri ve ayak parmaklarını yere koyma hareketi." },
+  { word: "İMSAK", definition: "Oruca başlama vakti, tan yerinin ağarmasıyla yeme içmenin sona erdiği an." },
+  { word: "İFTAR", definition: "Orucu açma zamanı, güneşin batmasıyla birlikte yeme içmeye başlama." },
+  { word: "SAHUR", definition: "Ramazan ayında oruç tutmak için imsak vaktinden önce yenilen yemek." },
+  { word: "HUTBE", definition: "Cuma ve bayram namazlarında imamın cemaate yaptığı konuşma." },
+  { word: "HADİS", definition: "Hz. Muhammed'in sözleri, davranışları ve onayladığı şeyler." },
+  { word: "FIKIH", definition: "İslam hukukunu ve ibadetlerin nasıl yapılacağını inceleyen bilim dalı." },
+  { word: "KERİM", definition: "Cömert, ikramı bol anlamına gelen Allah'ın isimlerinden biri." },
+  { word: "HAKİM", definition: "Her şeyi hikmetle yapan, bilge olan anlamına gelen Allah'ın isimlerinden biri." },
+  { word: "VEDUD", definition: "Seven ve sevilen anlamına gelen Allah'ın isimlerinden biri." },
+  { word: "ŞEHİD", definition: "Allah yolunda canını feda eden kimse." },
+  { word: "GAFUR", definition: "Günahları çokça bağışlayan anlamına gelen Allah'ın isimlerinden biri." },
+  { word: "SAMED", definition: "Hiçbir şeye muhtaç olmayan, her şeyin kendisine muhtaç olduğu varlık; Allah." },
+  { word: "VAHİD", definition: "Tek, bir olan anlamına gelen Allah'ın isimlerinden biri." },
+  { word: "GÖNÜL", definition: "Kalp, sevgi ve isteklerin merkezi olan manevi organ." },
+  { word: "SAYGI", definition: "Başkalarına karşı değerli olduklarını hissettiren dikkatli ve ölçülü davranış." },
+  { word: "HUZUR", definition: "İç rahatlığı, sükunet ve esenlik durumu." },
+  { word: "MERVE", definition: "Mekke'de, Safa ile arasında sa'y yapılan tepenin adı." },
+  { word: "TAVAF", definition: "Hac ve umrede Kâbe'nin etrafında yedi defa dönme ibadeti." },
+  { word: "İHRAM", definition: "Hac ve umre sırasında giyilen dikişsiz beyaz elbise ve bu elbise giyildiğinde uyulması gereken yasaklar." },
+  { word: "İNZAL", definition: "Allah tarafından kutsal kitapların peygamberlere indirilmesi." },
+  { word: "KİTAP", definition: "Allah'ın peygamberlerine vahyettiği kutsal metinler." },
+  { word: "SUHUF", definition: "Bazı peygamberlere indirilen küçük kitapçıklar, sahifeler." },
+  { word: "VACİP", definition: "Farz kadar kesin olmamakla birlikte yapılması kuvvetle emredilen şey." },
+  { word: "HARAM", definition: "İslam dinine göre yapılması veya kullanılması kesin olarak yasaklanmış olan şey." },
+  { word: "İSLAM", definition: "Allah'a teslimiyet anlamına gelen, Hz. Muhammed'e vahyedilen din." },
+  { word: "İHSAN", definition: "Allah'ı görüyormuş gibi ibadet etme, iyilik ve güzellik." }
 ];

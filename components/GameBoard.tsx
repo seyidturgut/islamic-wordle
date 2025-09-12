@@ -1,5 +1,7 @@
+
 import React from 'react';
-import { Guess, GameState } from '../src/types';
+// FIX: Corrected import path for types to use the root re-exporting types.ts
+import { Guess, GameState } from '../types';
 import { Tile } from './Tile';
 import { MAX_GUESSES } from '../constants';
 

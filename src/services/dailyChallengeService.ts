@@ -1,5 +1,6 @@
 
-import { DailyChallengeState, GameState, Guess, AppSettings } from '../types';
+
+import { DailyChallengeState, GameState, Guess, AppSettings, WordWithDefinition } from '../types';
 import { tr_words } from '../seed/tr_extended';
 import { en_words } from '../seed/en_extended';
 import { ar_words } from '../seed/ar_extended';
@@ -14,36 +15,32 @@ const seededRandom = (seed: number) => {
 };
 
 // Gets a deterministic word for the day based on the date
-export const getDailyWord = (wordLength: number, language: AppSettings['language']): string => {
+export const getDailyWord = (wordLength: number, language: AppSettings['language']): WordWithDefinition => {
     const today = new Date();
     // Use UTC date to avoid timezone issues
     const dayIndex = Math.floor(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) / (1000 * 60 * 60 * 24));
     
     const wordList = language === 'en' ? en_words : language === 'ar' ? ar_words : tr_words;
     
-    // Ensure words are correctly filtered by the specified length from the main list
-    const wordPool = wordList.filter(w => w.length === wordLength);
+    const wordPool = wordList.filter(w => w.word.length === wordLength);
     
     if (wordPool.length > 0) {
         const randomIndex = Math.floor(seededRandom(dayIndex) * wordPool.length);
-        return wordPool[randomIndex].toUpperCase();
+        return wordPool[randomIndex];
     }
     
-    // Failsafe mechanism: If no words of the specified length are found in the main list,
-    // try to find one in the core list. This ensures the game doesn't break
-    // if a rare word length is selected for the daily challenge.
     console.warn(`No daily word of length ${wordLength} found in ${language} list. Trying core list as a failsafe.`);
-    const coreWordPool = tr_core.filter(w => w.length === wordLength);
+    const coreWordPool = tr_core.filter(w => w.word.length === wordLength);
 
     if (coreWordPool.length > 0) {
         const randomIndex = Math.floor(seededRandom(dayIndex) * coreWordPool.length);
-        return coreWordPool[randomIndex].toUpperCase();
+        return coreWordPool[randomIndex];
     }
 
-    // Ultimate failsafe: If no words of the required length exist in any list,
-    // return a hardcoded failsafe word. This might cause a length mismatch but prevents a crash.
     console.error(`Ultimate Failsafe: No words of length ${wordLength} found. Returning default word.`);
-    return language === 'en' ? "ALLAH" : "NAMAZ";
+    return language === 'en' 
+        ? { word: "ALLAH", definition: "The Arabic name for the one and only God in Islam." } 
+        : { word: "NAMAZ", definition: "İslam'ın beş şartından biri olan, belirli hareket ve dualardan oluşan ibadet." };
 };
 
 const getTodayString = (): string => {
@@ -57,9 +54,11 @@ export const loadDailyChallengeState = (language: AppSettings['language']): Dail
         const stateJSON = localStorage.getItem(getDailyChallengeKey(language));
         if (stateJSON) {
             const state: DailyChallengeState = JSON.parse(stateJSON);
-            // If the saved state is not for today, ignore it
             if (state.date === getTodayString()) {
-                return state;
+                // Basic validation to ensure the loaded solution is in the new format
+                if (state.solution && typeof state.solution.word === 'string') {
+                    return state;
+                }
             }
         }
         return null;
@@ -69,7 +68,7 @@ export const loadDailyChallengeState = (language: AppSettings['language']): Dail
     }
 };
 
-export const saveDailyChallengeState = (solution: string, guesses: Guess[], gameState: GameState, language: AppSettings['language']) => {
+export const saveDailyChallengeState = (solution: WordWithDefinition, guesses: Guess[], gameState: GameState, language: AppSettings['language']) => {
     try {
         const state: DailyChallengeState = {
             solution,

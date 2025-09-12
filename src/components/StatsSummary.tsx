@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useSettings } from '../hooks/useSettings.ts';
 import { GameStats } from '../types.ts';
@@ -19,7 +20,8 @@ export const StatsSummary: React.FC<StatsSummaryProps> = ({ stats }) => {
     const winPercentage = stats.gamesPlayed > 0
         ? Math.round((stats.gamesWon / stats.gamesPlayed) * 100)
         : 0;
-
+    
+    // FIX: With correct GameStats typing, `gamesWon` is a number, resolving the type error.
     const totalGuesses = Object.entries(stats.guessDistribution).reduce(
         (acc, [guessCount, gamesWon]) => acc + parseInt(guessCount) * gamesWon,
         0

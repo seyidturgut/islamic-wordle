@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSettings } from '../../hooks/useSettings.ts';
 import type { AppTheme, GameStats, AppSettings } from '../../types.ts';
@@ -12,6 +13,7 @@ interface SettingsScreenProps {
 }
 
 const SettingsScreen: React.FC<SettingsScreenProps> = ({ navigate }) => {
+  // FIX: The `useSettings` hook now provides `settings`, `updateSettings`, and `t`.
   const { settings, updateSettings, t } = useSettings();
   const [stats, setStats] = useState<GameStats | null>(null);
   const focusRingClasses = "focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900";
@@ -22,15 +24,15 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({ navigate }) => {
   }, [settings.language]);
 
   const handleThemeChange = (theme: AppTheme) => {
-    updateSettings({ ...settings, theme });
+    updateSettings({ theme });
   };
   
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    updateSettings({ ...settings, language: e.target.value as AppSettings['language'] });
+    updateSettings({ language: e.target.value as AppSettings['language'] });
   };
   
   const handleWordLengthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateSettings({ ...settings, wordLength: parseInt(e.target.value) });
+    updateSettings({ wordLength: parseInt(e.target.value) });
   };
 
   const Toggle: React.FC<{ label: string; checked: boolean; onChange: (checked: boolean) => void }> = ({ label, checked, onChange }) => (
@@ -89,7 +91,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({ navigate }) => {
               <input id="word-length-slider" type="range" min={MIN_WORD_LENGTH} max={MAX_WORD_LENGTH} value={settings.wordLength} onChange={handleWordLengthChange} className={`w-full h-2 bg-gray-300 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-600 mt-2 ${focusRingClasses}`} />
           </div>
 
-          <Toggle label={t('haptics')} checked={settings.hapticsEnabled} onChange={checked => updateSettings({...settings, hapticsEnabled: checked})} />
+          <Toggle label={t('haptics')} checked={settings.hapticsEnabled} onChange={checked => updateSettings({hapticsEnabled: checked})} />
 
         </div>
       </div>

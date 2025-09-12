@@ -1,6 +1,8 @@
+
 import React from 'react';
 import { useSettings } from '../src/hooks/useSettings';
-import { GameMode } from '../src/types';
+// FIX: Corrected import path for types to use the root re-exporting types.ts
+import { GameMode } from '../types';
 
 interface HeaderProps {
     onShowHelp?: () => void;
@@ -12,6 +14,7 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ onShowHelp, onShowStats, onShowSettings, onBack, gameMode, onRandomize }) => {
+    // FIX: The `useSettings` hook now provides the `t` function.
     const { t } = useSettings();
     const focusRingClasses = "focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900";
 

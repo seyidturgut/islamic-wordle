@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { GameBoard } from '../../../components/GameBoard';
 import { Keyboard } from '../../../components/Keyboard';
@@ -7,7 +8,7 @@ import { Toast } from '../../../components/Toast';
 import Header from '../../../components/Header';
 import { HowToPlayModal } from '../../components/HowToPlayModal';
 import { DailySummaryModal } from '../../components/DailySummaryModal';
-import { Guess, LetterStatus, GameMode, GameState, GameStats } from '../../types';
+import { Guess, LetterStatus, GameMode, GameState, GameStats, WordWithDefinition } from '../../types';
 import { MAX_GUESSES } from '../../../constants';
 import { useSettings } from '../../hooks/useSettings';
 import { fetchWordForGame } from '../../services/wordService';
@@ -30,10 +31,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
 
   const wordList = useMemo(() => {
     const words = language === 'en' ? en_words : language === 'ar' ? ar_words : tr_words;
-    return new Set(words.map(w => w.toUpperCase()));
+    return new Set(words.map(w => w.word.toUpperCase()));
   }, [language]);
 
-  const [solution, setSolution] = useState('');
+  const [solution, setSolution] = useState<WordWithDefinition | null>(null);
   const [guesses, setGuesses] = useState<Guess[]>([]);
   const [currentGuess, setCurrentGuess] = useState('');
   const [gameState, setGameState] = useState<GameState>('playing');
@@ -51,8 +52,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
   const [stats, setStats] = useState<GameStats>(statsService.loadStats(language));
   const [announcement, setAnnouncement] = useState('');
 
-  const startNewGame = useCallback((newWord: string) => {
-    setSolution(newWord.toUpperCase());
+  const startNewGame = useCallback((newWord: WordWithDefinition) => {
+    setSolution(newWord);
     setGuesses([]);
     setCurrentGuess('');
     setGameState('playing');
@@ -74,19 +75,17 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
       const dailyState = dailyChallengeService.loadDailyChallengeState(language);
       const dailyWord = dailyChallengeService.getDailyWord(wordLength, language);
 
-      if (dailyState && dailyState.solution.toUpperCase() === dailyWord.toUpperCase()) {
-        setSolution(dailyState.solution.toUpperCase());
+      if (dailyState && dailyState.solution.word.toUpperCase() === dailyWord.word.toUpperCase()) {
+        setSolution(dailyState.solution);
         setGuesses(dailyState.guesses);
         setGameState(dailyState.gameState);
         
-        // Re-calculate key statuses from saved guesses
         const initialStatuses = {};
         const finalStatuses = dailyState.guesses.reduce((acc, guess) => {
             const newStatuses = { ...acc };
             guess.letters.forEach((letter, i) => {
                 const status = guess.statuses[i];
                 const existing = newStatuses[letter];
-                // Priority: Correct > Present > Absent
                 if (existing === LetterStatus.Correct) return;
                 if (existing === LetterStatus.Present && status === LetterStatus.Absent) return;
                 newStatuses[letter] = status;
@@ -113,9 +112,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
     setToastMessage(message);
   };
   
-  const getGuessWithStatuses = (guess: string, solution: string): Guess => {
+  const getGuessWithStatuses = (guess: string, sol: string): Guess => {
     const guessLetters = guess.split('');
-    const solutionLetters = solution.split('');
+    const solutionLetters = sol.split('');
     const statuses: LetterStatus[] = Array(wordLength).fill(LetterStatus.Absent);
     const letterCounts = solutionLetters.reduce((acc, letter) => {
         acc[letter] = (acc[letter] || 0) + 1;
@@ -154,6 +153,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
   };
 
   const submitGuess = () => {
+    if (!solution) return;
+
     if (currentGuess.length !== wordLength) {
       setShakeCurrentRow(true);
       setTimeout(() => setShakeCurrentRow(false), 600);
@@ -171,7 +172,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
     }
     
     setIsRevealing(true);
-    const newGuess = getGuessWithStatuses(currentGuess, solution);
+    const newGuess = getGuessWithStatuses(currentGuess, solution.word);
     
     setTimeout(() => {
         const newGuesses = [...guesses, newGuess];
@@ -180,10 +181,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
         updateKeyStatuses(newGuess);
         setIsRevealing(false);
 
-        const isWin = newGuess.letters.join('') === solution;
+        const isWin = newGuess.letters.join('') === solution.word;
         const isLoss = newGuesses.length === MAX_GUESSES && !isWin;
 
-        // Announce result for screen readers
         const guessNumber = newGuesses.length;
         const statusWords = newGuess.statuses.map(status =>
             t('status' + status.charAt(0).toUpperCase() + status.slice(1))
@@ -198,7 +198,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
             playSound('win', settings.hapticsEnabled);
         } else if (isLoss) {
             setGameState('lost');
-            setAnnouncement(prev => `${prev}. ${t('modalLossTitle')}. ${t('modalSolutionIs')} ${solution}`);
+            setAnnouncement(prev => `${prev}. ${t('modalLossTitle')}. ${t('modalSolutionIs')} ${solution.word}`);
             playSound('lose', settings.hapticsEnabled);
         } else {
             playSound('guess', settings.hapticsEnabled);
@@ -231,7 +231,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
       setCurrentGuess(prev => prev + key.toUpperCase());
       playSound('keyPress', settings.hapticsEnabled);
     }
-  }, [gameState, isRevealing, currentGuess, wordLength, settings, t, submitGuess, wordList]);
+  }, [gameState, isRevealing, currentGuess, wordLength, settings, t, submitGuess, wordList, solution]);
 
   useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
@@ -259,13 +259,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
     startNewGame(fetchWordForGame(wordLength, language));
   };
   
-  if (isLoading) {
+  if (isLoading || !solution) {
     return <Loader />;
   }
 
   return (
-    <div className="flex flex-col h-screen w-full max-w-lg mx-auto">
-      {/* Visually hidden container for screen reader announcements */}
+    <div className="flex flex-col h-full w-full max-w-lg mx-auto">
       <div className="absolute w-px h-px overflow-hidden" style={{clip: 'rect(0 0 0 0)', clipPath: 'inset(50%)'}} aria-live="polite" aria-atomic="true">
         {announcement}
       </div>
@@ -281,13 +280,16 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
           gameState={gameState}
         />
       </main>
-      <Keyboard onKeyPress={handleKeyPress} keyStatuses={keyStatuses} />
-      <AdsenseAd />
+      <div className="mt-auto">
+        <Keyboard onKeyPress={handleKeyPress} keyStatuses={keyStatuses} />
+        <AdsenseAd />
+      </div>
       {gameMode === 'practice' && (
         <GameModal
           isOpen={isPracticeModalOpen}
           isWin={gameState === 'won'}
-          solution={solution}
+          solution={solution.word}
+          solutionDefinition={solution.definition}
           onPlayAgain={handlePlayAgain}
         />
       )}
@@ -296,7 +298,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
             isOpen={isSummaryModalOpen}
             onClose={() => setSummaryModalOpen(false)}
             stats={stats}
-            solution={solution}
+            solution={solution.word}
+            solutionDefinition={solution.definition}
             guesses={guesses}
             isWin={gameState === 'won'}
           />

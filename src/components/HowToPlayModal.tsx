@@ -1,3 +1,4 @@
+
 import React, { useRef } from 'react';
 import { useSettings } from '../hooks/useSettings.ts';
 import { Tile } from '../../components/Tile.tsx';
@@ -23,12 +24,13 @@ const ExampleRow: React.FC<{ word: string; highlightIndex: number; status: Lette
                     />
                 ))}
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: description }} />
+            <p className="text-sm text-start text-gray-600 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: description }} />
         </div>
     );
 };
 
 export const HowToPlayModal: React.FC<HowToPlayModalProps> = ({ isOpen, onClose }) => {
+  // FIX: The `useSettings` hook now provides the `t` function.
   const { t } = useSettings();
   const modalRef = useRef<HTMLDivElement>(null);
   const focusRingClasses = "focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-800";
@@ -59,7 +61,7 @@ export const HowToPlayModal: React.FC<HowToPlayModalProps> = ({ isOpen, onClose 
             </button>
         </div>
         
-        <div className="text-base space-y-3 mb-6">
+        <div className="text-base text-start space-y-3 mb-6">
             <p>{t('howToPlayIntro1')}</p>
             <p>{t('howToPlayIntro2')}</p>
             <p>{t('howToPlayIntro3')}</p>

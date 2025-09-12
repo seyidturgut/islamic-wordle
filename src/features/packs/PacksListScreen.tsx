@@ -1,3 +1,4 @@
+
 import React from 'react';
 import type { Screen } from '../../../App.tsx';
 import { useSettings } from '../../hooks/useSettings.ts';
@@ -7,6 +8,7 @@ interface PacksListScreenProps {
 }
 
 const PacksListScreen: React.FC<PacksListScreenProps> = ({ navigate }) => {
+  // FIX: The `useSettings` hook now provides the `t` function.
   const { t } = useSettings();
 
   return (

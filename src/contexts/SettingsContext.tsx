@@ -1,254 +1,295 @@
-import React, { createContext, useState, useEffect, useMemo } from 'react';
-import { AppSettings, AppTheme } from '../types.ts';
-import { DEFAULT_WORD_LENGTH } from '../../constants.ts';
+// FIX: Implemented the SettingsContext to provide settings, an updater, and a translation function to the entire app.
+import React, { createContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import { AppSettings, AppTheme, Language } from '../types';
+import { DEFAULT_WORD_LENGTH } from '../../constants';
 
-type Translations = {
-  [lang: string]: Record<string, string>;
-};
-
-// we relax the TranslationKey type to a generic string.
-type TranslationKey = string;
-
-// By embedding the translation data directly, we eliminate the need for a network request (fetch),
-// which was failing during deployment due to incorrect file paths. This makes the translation
-// system more robust and independent of the server's file structure.
-const translations: Translations = {
+// Basic translations
+const translations: Record<string, Record<string, string>> = {
   en: {
-    "back": "Back",
-    "help": "Help",
-    "settings": "Settings",
-    "statistics": "Statistics",
-    "close": "Close",
-    "packs": "Word Packs",
-    "featureComingSoon": "Feature Coming Soon!",
-    "wordPackManagement": "Word pack management will be available here.",
-    "packDetails": "Pack Details",
-    "createPack": "Create Pack",
-    "areYouSure": "Are you sure?",
-    "modalWinTitle": "Congratulations!",
-    "modalLossTitle": "Better luck next time!",
-    "modalSolutionIs": "The word was:",
-    "playAgain": "Play Again",
-    "notEnoughLetters": "Not enough letters",
-    "notInWordList": "Word not in list",
-    "statusCorrect": "Correct",
-    "statusPresent": "Present",
-    "statusAbsent": "Absent",
-    "statusEmpty": "Empty",
-    "nextPuzzle": "Next Wordle in",
-    "copied": "Copied!",
-    "share": "Share",
-    "guessDistribution": "Guess Distribution",
-    "theme": "Theme",
-    "light": "Light",
-    "dark": "Dark",
-    "system": "System",
-    "language": "Language",
-    "wordLength": "Word Length",
-    "haptics": "Haptic Feedback",
-    "howToPlayTitle": "How to Play",
-    "howToPlayIntro1": "Guess the word in 6 tries.",
-    "howToPlayIntro2": "Each guess must be a valid word of the correct length.",
-    "howToPlayIntro3": "After each guess, the color of the tiles will change to show how close your guess was to the word.",
-    "examples": "Examples",
-    "exampleWord1": "KIBLE",
-    "exampleCorrectDesc": "<b>K</b> is in the word and in the correct spot.",
-    "exampleWord2": "SALAT",
-    "examplePresentDesc": "<b>A</b> is in the word but in the wrong spot.",
-    "exampleWord3": "TAZIM",
-    "exampleAbsentDesc": "<b>İ</b> is not in the word in any spot.",
-    "startPlaying": "Start Playing!",
-    "gamesPlayed": "Played",
-    "winPercentage": "Win %",
-    "currentStreak": "Streak",
-    "maxStreak": "Max Streak",
-    "avgGuesses": "Avg. Guesses",
-    "dailyChallenge": "Daily Challenge",
-    "practiceMode": "Practice Mode",
-    "randomWord": "Random Word",
-    "guessSummary": "Guess {guessNum}"
+    // Modal titles
+    modalWinTitle: 'Congratulations!',
+    modalLossTitle: 'Better luck next time!',
+    modalSolutionIs: 'The word was:',
+    playAgain: 'Play Again',
+    // Toasts
+    notEnoughLetters: 'Not enough letters',
+    notInWordList: 'Not in word list',
+    copiedToClipboard: 'Copied to clipboard!',
+    // Keyboard
+    Enter: 'Enter',
+    // Settings
+    settings: 'Settings',
+    statistics: 'Statistics',
+    theme: 'Theme',
+    light: 'Light',
+    dark: 'Dark',
+    system: 'System',
+    language: 'Language',
+    wordLength: 'Word Length',
+    haptics: 'Haptic Feedback',
+    // Stats
+    gamesPlayed: 'Played',
+    winPercentage: 'Win %',
+    currentStreak: 'Current Streak',
+    maxStreak: 'Max Streak',
+    guessDistribution: 'Guess Distribution',
+    avgGuesses: 'Avg. Guesses',
+    // How to Play
+    howToPlayTitle: 'How to Play',
+    close: 'Close',
+    howToPlayIntro1: 'Guess the word in 6 tries.',
+    howToPlayIntro2: 'Each guess must be a valid word. Hit the enter button to submit.',
+    howToPlayIntro3: 'After each guess, the color of the tiles will change to show how close your guess was to the word.',
+    examples: 'Examples',
+    exampleWord1: 'SABIR',
+    exampleCorrectDesc: "The letter <strong>S</strong> is in the word and in the correct spot.",
+    exampleWord2: 'HELAL',
+    examplePresentDesc: "The letter <strong>L</strong> is in the word but in the wrong spot.",
+    exampleWord3: 'KADER',
+    exampleAbsentDesc: "The letter <strong>R</strong> is not in the word in any spot.",
+    startPlaying: "Let's Play!",
+    // Header
+    back: 'Back',
+    help: 'Help',
+    randomWord: 'New Word',
+    // Home Screen
+    homeSubtitle: 'A daily word game with an Islamic theme.',
+    dailyChallenge: 'Daily Challenge',
+    practiceMode: 'Practice Mode',
+    dailyStreak: 'Daily Streak',
+    homeFooter: 'Inspired by Wordle.',
+    // Packs Screen
+    packs: 'Word Packs',
+    featureComingSoon: 'Feature Coming Soon!',
+    wordPackManagement: 'Word pack management will be available here in a future update.',
+    // Misc A11y
+    statusCorrect: 'Correct',
+    statusPresent: 'Present',
+    statusAbsent: 'Absent',
+    statusEmpty: 'Empty',
+    // GameScreen announcements
+    guessSummary: "Guess {guessNum}",
+    // Pack Detail
+    packDetails: "Pack Details",
+    // Create Pack
+    createPack: "Create Pack",
+    // Confirmation
+    areYouSure: "Are you sure?",
+    // Sharing
+    share: 'Share',
   },
   tr: {
-    "back": "Geri",
-    "help": "Yardım",
-    "settings": "Ayarlar",
-    "statistics": "İstatistikler",
-    "close": "Kapat",
-    "packs": "Kelime Paketleri",
-    "featureComingSoon": "Bu Özellik Yakında Gelecek!",
-    "wordPackManagement": "Kelime paketi yönetimi burada mevcut olacak.",
-    "packDetails": "Paket Detayları",
-    "createPack": "Paket Oluştur",
-    "areYouSure": "Emin misiniz?",
-    "modalWinTitle": "Tebrikler!",
-    "modalLossTitle": "Bir dahaki sefere!",
-    "modalSolutionIs": "Doğru kelime:",
-    "playAgain": "Tekrar Oyna",
-    "notEnoughLetters": "Yeterli harf yok",
-    "notInWordList": "Kelime listede yok",
-    "statusCorrect": "Doğru",
-    "statusPresent": "Mevcut",
-    "statusAbsent": "Yok",
-    "statusEmpty": "Boş",
-    "nextPuzzle": "Sonraki Kelimeye Kalan Süre",
-    "copied": "Kopyalandı!",
-    "share": "Paylaş",
-    "guessDistribution": "Tahmin Dağılımı",
-    "theme": "Tema",
-    "light": "Açık",
-    "dark": "Koyu",
-    "system": "Sistem",
-    "language": "Dil",
-    "wordLength": "Kelime Uzunluğu",
-    "haptics": "Dokunsal Geribildirim",
-    "howToPlayTitle": "Nasıl Oynanır?",
-    "howToPlayIntro1": "Kelimeyi 6 denemede tahmin et.",
-    "howToPlayIntro2": "Her tahmin, kelime uzunluğunda anlamlı bir kelime olmalıdır.",
-    "howToPlayIntro3": "Her denemeden sonra kutuların renkleri, tahmininizin doğruluğuna göre değişecektir.",
-    "examples": "Örnekler",
-    "exampleWord1": "KIBLE",
-    "exampleCorrectDesc": "<b>K</b> harfi kelimede var ve doğru yerde.",
-    "exampleWord2": "SALAT",
-    "examplePresentDesc": "<b>A</b> harfi kelimede var ama yanlış yerde.",
-    "exampleWord3": "TAZİM",
-    "exampleAbsentDesc": "<b>İ</b> harfi kelimede yok.",
-    "startPlaying": "Oyna Başla!",
-    "gamesPlayed": "Oynanan",
-    "winPercentage": "Kazanma %",
-    "currentStreak": "Seri",
-    "maxStreak": "En Yüksek Seri",
-    "avgGuesses": "Ort. Tahmin",
-    "dailyChallenge": "Günlük Görev",
-    "practiceMode": "Alıştırma Modu",
-    "randomWord": "Rastgele Kelime",
-    "guessSummary": "Tahmin {guessNum}"
+    // Modal titles
+    modalWinTitle: 'Tebrikler!',
+    modalLossTitle: 'Bir dahaki sefere!',
+    modalSolutionIs: 'Doğru kelime:',
+    playAgain: 'Tekrar Oyna',
+    // Toasts
+    notEnoughLetters: 'Yeterli harf yok',
+    notInWordList: 'Kelime listesinde yok',
+    copiedToClipboard: 'Panoya kopyalandı!',
+    // Keyboard
+    Enter: 'Giriş',
+    // Settings
+    settings: 'Ayarlar',
+    statistics: 'İstatistikler',
+    theme: 'Tema',
+    light: 'Açık',
+    dark: 'Koyu',
+    system: 'Sistem',
+    language: 'Dil',
+    wordLength: 'Kelime Uzunluğu',
+    haptics: 'Titreşimli Geri Bildirim',
+    // Stats
+    gamesPlayed: 'Oynanan',
+    winPercentage: 'Kazanma %',
+    currentStreak: 'Mevcut Seri',
+    maxStreak: 'Maks. Seri',
+    guessDistribution: 'Tahmin Dağılımı',
+    avgGuesses: 'Ort. Tahmin',
+    // How to Play
+    howToPlayTitle: 'Nasıl Oynanır?',
+    close: 'Kapat',
+    howToPlayIntro1: 'Kelimeyi 6 denemede tahmin et.',
+    howToPlayIntro2: 'Her tahmin geçerli bir kelime olmalıdır. Göndermek için giriş tuşuna bas.',
+    howToPlayIntro3: 'Her tahminden sonra, kutucukların rengi tahmininizin kelimeye ne kadar yakın olduğunu göstermek için değişecektir.',
+    examples: 'Örnekler',
+    exampleWord1: 'SABIR',
+    exampleCorrectDesc: "<strong>S</strong> harfi kelimede var ve doğru yerde.",
+    exampleWord2: 'HELAL',
+    examplePresentDesc: "<strong>L</strong> harfi kelimede var ama yanlış yerde.",
+    exampleWord3: 'KADER',
+    exampleAbsentDesc: "<strong>R</strong> harfi kelimede hiçbir yerde yok.",
+    startPlaying: "Hadi Oynayalım!",
+    // Header
+    back: 'Geri',
+    help: 'Yardım',
+    randomWord: 'Yeni Kelime',
+    // Home Screen
+    homeSubtitle: 'İslami temalı günlük bir kelime oyunu.',
+    dailyChallenge: 'Günlük Görev',
+    practiceMode: 'Alıştırma Modu',
+    dailyStreak: 'Günlük Seri',
+    homeFooter: 'Wordle\'dan esinlenilmiştir.',
+    // Packs Screen
+    packs: 'Kelime Paketleri',
+    featureComingSoon: 'Bu Özellik Yakında Gelecek!',
+    wordPackManagement: 'Kelime paketi yönetimi gelecekteki bir güncellemede burada mevcut olacak.',
+    // Misc A11y
+    statusCorrect: 'Doğru',
+    statusPresent: 'Mevcut',
+    statusAbsent: 'Yok',
+    statusEmpty: 'Boş',
+     // GameScreen announcements
+    guessSummary: "Tahmin {guessNum}",
+    // Pack Detail
+    packDetails: "Paket Detayları",
+    // Create Pack
+    createPack: "Paket Oluştur",
+    // Confirmation
+    areYouSure: "Emin misiniz?",
+    // Sharing
+    share: 'Paylaş',
   },
   ar: {
-    "back": "رجوع",
-    "help": "مساعدة",
-    "settings": "الإعدادات",
-    "statistics": "الإحصائيات",
-    "close": "إغلاق",
-    "packs": "حزم الكلمات",
-    "featureComingSoon": "الميزة قادمة قريبًا!",
-    "wordPackManagement": "إدارة حزم الكلمات ستكون متاحة هنا.",
-    "packDetails": "تفاصيل الحزمة",
-    "createPack": "إنشاء حزمة",
-    "areYouSure": "هل أنت متأكد؟",
-    "modalWinTitle": "تهانينا!",
-    "modalLossTitle": "حظ أوفر في المرة القادمة!",
-    "modalSolutionIs": "الكلمة كانت:",
-    "playAgain": "العب مرة أخرى",
-    "notEnoughLetters": "أحرف غير كافية",
-    "notInWordList": "الكلمة ليست في القائمة",
-    "statusCorrect": "صحيح",
-    "statusPresent": "موجود",
-    "statusAbsent": "غير موجود",
-    "statusEmpty": "فارغ",
-    "nextPuzzle": "الكلمة التالية بعد",
-    "copied": "تم النسخ!",
-    "share": "مشاركة",
-    "guessDistribution": "توزيع التخمينات",
-    "theme": "المظهر",
-    "light": "فاتح",
-    "dark": "داكن",
-    "system": "النظام",
-    "language": "اللغة",
-    "wordLength": "طول الكلمة",
-    "haptics": "ردود الفعل اللمسية",
-    "howToPlayTitle": "كيفية اللعب",
-    "howToPlayIntro1": "خمن الكلمة في 6 محاولات.",
-    "howToPlayIntro2": "يجب أن يكون كل تخمين كلمة صحيحة بالطول الصحيح.",
-    "howToPlayIntro3": "بعد كل تخمين، سيتغير لون المربعات ليظهر مدى قرب تخمينك من الكلمة.",
-    "examples": "أمثلة",
-    "exampleWord1": "كعبة",
-    "exampleCorrectDesc": "<b>ك</b> في الكلمة وفي المكان الصحيح.",
-    "exampleWord2": "صلاة",
-    "examplePresentDesc": "<b>ا</b> في الكلمة ولكن في المكان الخطأ.",
-    "exampleWord3": "تسبيح",
-    "exampleAbsentDesc": "<b>ي</b> ليست في الكلمة في أي مكان.",
-    "startPlaying": "ابدأ اللعب!",
-    "gamesPlayed": "لعبت",
-    "winPercentage": "فوز ٪",
-    "currentStreak": "سلسلة",
-    "maxStreak": "أقصى سلسلة",
-    "avgGuesses": "متوسط التخمينات",
-    "dailyChallenge": "التحدي اليومي",
-    "practiceMode": "وضع التدريب",
-    "randomWord": "كلمة عشوائية",
-    "guessSummary": "تخمين {guessNum}"
-  }
+    // Modal titles
+    modalWinTitle: 'تهانينا!',
+    modalLossTitle: 'حظ أوفر في المرة القادمة!',
+    modalSolutionIs: 'الكلمة الصحيحة كانت:',
+    playAgain: 'العب مرة أخرى',
+    // Toasts
+    notEnoughLetters: 'أحرف غير كافية',
+    notInWordList: 'ليست في قائمة الكلمات',
+    copiedToClipboard: 'تم النسخ إلى الحافظة!',
+    // Keyboard
+    Enter: 'إدخال',
+    // Settings
+    settings: 'الإعدادات',
+    statistics: 'الإحصائيات',
+    theme: 'المظهر',
+    light: 'فاتح',
+    dark: 'داكن',
+    system: 'النظام',
+    language: 'اللغة',
+    wordLength: 'طول الكلمة',
+    haptics: 'ردود الفعل اللمسية',
+    // Stats
+    gamesPlayed: 'لعبت',
+    winPercentage: 'نسبة الفوز',
+    currentStreak: 'سلسلة حالية',
+    maxStreak: 'أقصى سلسلة',
+    guessDistribution: 'توزيع التخمين',
+    avgGuesses: 'متوسط التخمينات',
+    // How to Play
+    howToPlayTitle: 'كيفية اللعب',
+    close: 'إغلاق',
+    howToPlayIntro1: 'خمن الكلمة في 6 محاولات.',
+    howToPlayIntro2: 'يجب أن يكون كل تخمين كلمة صحيحة. اضغط على زر الإدخال للإرسال.',
+    howToPlayIntro3: 'بعد كل تخمين، سيتغير لون المربعات ليظهر مدى قرب تخمينك من الكلمة.',
+    examples: 'أمثلة',
+    exampleWord1: 'صبر',
+    exampleCorrectDesc: "حرف <strong>ص</strong> موجود في الكلمة وفي المكان الصحيح.",
+    exampleWord2: 'حلال',
+    examplePresentDesc: "حرف <strong>ل</strong> موجود في الكلمة ولكن في المكان الخطأ.",
+    exampleWord3: 'قدر',
+    exampleAbsentDesc: "حرف <strong>ر</strong> غير موجود في الكلمة في أي مكان.",
+    startPlaying: "هيا نلعب!",
+    // Header
+    back: 'رجوع',
+    help: 'مساعدة',
+    randomWord: 'كلمة جديدة',
+    // Home Screen
+    homeSubtitle: 'لعبة كلمات يومية ذات طابع إسلامي.',
+    dailyChallenge: 'التحدي اليومي',
+    practiceMode: 'وضع التمرين',
+    dailyStreak: 'سلسلة يومية',
+    homeFooter: 'مستوحاة من لعبة Wordle.',
+    // Packs Screen
+    packs: 'حزم الكلمات',
+    featureComingSoon: 'الميزة قادمة قريبا!',
+    wordPackManagement: 'ستكون إدارة حزم الكلمات متاحة هنا في تحديث مستقبلي.',
+    // Misc A11y
+    statusCorrect: 'صحيح',
+    statusPresent: 'موجود',
+    statusAbsent: 'غير موجود',
+    statusEmpty: 'فارغ',
+     // GameScreen announcements
+    guessSummary: "تخمين {guessNum}",
+    // Pack Detail
+    packDetails: "تفاصيل الحزمة",
+    // Create Pack
+    createPack: "إنشاء حزمة",
+    // Confirmation
+    areYouSure: "هل أنت متأكد؟",
+    // Sharing
+    share: 'مشاركة',
+  },
 };
-
-
 interface SettingsContextType {
   settings: AppSettings;
-  updateSettings: (newSettings: AppSettings) => void;
-  t: (key: TranslationKey) => string;
+  updateSettings: (newSettings: Partial<AppSettings>) => void;
+  t: (key: string) => string;
 }
 
-const defaultSettings: AppSettings = {
-  theme: 'dark',
-  language: 'tr',
-  wordLength: DEFAULT_WORD_LENGTH,
-  hapticsEnabled: true,
-};
+export const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
-export const SettingsContext = createContext<SettingsContextType>({
-  settings: defaultSettings,
-  updateSettings: () => {},
-  t: (key: TranslationKey) => key, // Return key as a fallback
-});
+const getSystemTheme = (): AppTheme => window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 
-export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [settings, setSettings] = useState<AppSettings>(() => {
     try {
       const storedSettings = localStorage.getItem('islamicWordleSettings');
-      const parsed = storedSettings ? JSON.parse(storedSettings) : {};
-      const mergedSettings = { ...defaultSettings, ...parsed };
-
-      // Ensure language is always valid to prevent translation issues
-      if (!['tr', 'en', 'ar'].includes(mergedSettings.language)) {
-        mergedSettings.language = 'tr';
+      if (storedSettings) {
+        return JSON.parse(storedSettings);
       }
-
-      return mergedSettings;
     } catch (e) {
-      return defaultSettings;
+      console.error('Failed to parse settings from localStorage', e);
     }
+    return {
+      wordLength: DEFAULT_WORD_LENGTH,
+      language: 'tr',
+      theme: 'system',
+      hapticsEnabled: true,
+    };
   });
-
-  // The fetch call for translations has been removed.
-  // Translations are now embedded directly in the `translations` constant above.
 
   useEffect(() => {
     try {
       localStorage.setItem('islamicWordleSettings', JSON.stringify(settings));
     } catch (e) {
-      console.error("Failed to save settings:", e);
+      console.error('Failed to save settings to localStorage', e);
     }
-    
-    // Theme and RTL application
-    const isDarkMode = settings.theme === 'dark' || (settings.theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
-    if (isDarkMode) {
-        document.documentElement.classList.add('dark');
-    } else {
-        document.documentElement.classList.remove('dark');
-    }
-    
-    // Set document language and direction
-    document.documentElement.lang = settings.language;
-    document.documentElement.dir = settings.language === 'ar' ? 'rtl' : 'ltr';
+    const root = window.document.documentElement;
+    const isDark = settings.theme === 'dark' || (settings.theme === 'system' && getSystemTheme() === 'dark');
+    root.classList.toggle('dark', isDark);
+
+    // Update html lang and dir for accessibility
+    root.lang = settings.language;
+    root.dir = settings.language === 'ar' ? 'rtl' : 'ltr';
 
   }, [settings]);
 
-  const updateSettings = (newSettings: AppSettings) => {
-    setSettings(newSettings);
-  };
+  useEffect(() => {
+    if (settings.theme === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleChange = () => {
+        const root = window.document.documentElement;
+        root.classList.toggle('dark', mediaQuery.matches);
+      };
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    }
+  }, [settings.theme]);
+
+  const updateSettings = useCallback((newSettings: Partial<AppSettings>) => {
+    setSettings(prev => ({ ...prev, ...newSettings }));
+  }, []);
   
-  const t = useMemo(() => (key: TranslationKey): string => {
-    return translations[settings.language]?.[key] || key;
+  const t = useCallback((key: string): string => {
+    const lang = settings.language as Language;
+    const translation = translations[lang]?.[key] || translations['en']?.[key] || key;
+    return translation;
   }, [settings.language]);
 
   return (

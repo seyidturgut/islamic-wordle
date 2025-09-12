@@ -1,5 +1,8 @@
+
+
 import React from 'react';
-import { LetterStatus } from '../src/types';
+// FIX: Corrected import path for types to use the root re-exporting types.ts
+import { LetterStatus } from '../types';
 import { useSettings } from '../src/hooks/useSettings';
 
 interface KeyboardProps {
@@ -13,8 +16,10 @@ const Key: React.FC<{
   onKeyPress: (key: string) => void;
   flex?: number;
   isSpecial?: boolean;
-}> = ({ value, status, onKeyPress, flex = 1, isSpecial }) => {
-  const baseClasses = `h-14 rounded-md font-bold flex items-center justify-center m-0.5 sm:m-1 cursor-pointer transition-colors duration-200 select-none`;
+  isArabic: boolean;
+  specialKeyText?: string;
+}> = ({ value, status, onKeyPress, flex = 1, isSpecial, isArabic, specialKeyText }) => {
+  const baseClasses = `h-12 rounded-md font-bold flex items-center justify-center m-0.5 sm:m-1 cursor-pointer transition-colors duration-200 select-none`;
   const focusClasses = "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-emerald-500 dark:focus-visible:ring-offset-gray-900";
   const statusClasses = {
     [LetterStatus.Correct]: 'bg-emerald-600 text-white border-transparent',
@@ -29,16 +34,17 @@ const Key: React.FC<{
   const classes = `${baseClasses} ${status !== undefined ? statusClasses[status] : defaultClasses} ${focusClasses}`;
   
   let content;
-  let textAndCaseClasses = 'uppercase text-sm sm:text-base';
+  let textAndCaseClasses: string;
   
   if (value === 'Backspace') {
     content = '⌫';
     textAndCaseClasses = 'text-2xl normal-case';
   } else if (value === 'Enter') {
-    content = value;
-    textAndCaseClasses = 'uppercase text-xs sm:text-sm';
+    content = specialKeyText;
+    textAndCaseClasses = isArabic ? 'text-base normal-case' : 'uppercase text-xs sm:text-sm';
   } else {
     content = value;
+    textAndCaseClasses = isArabic ? 'text-xl normal-case' : 'uppercase text-sm sm:text-base';
   }
 
   return (
@@ -54,7 +60,9 @@ const Key: React.FC<{
 };
 
 export const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, keyStatuses }) => {
-  const { settings } = useSettings();
+  // FIX: The `useSettings` hook now provides `settings` and `t`.
+  const { settings, t } = useSettings();
+  const isArabic = settings.language === 'ar';
 
   const layouts = {
     tr: {
@@ -78,17 +86,17 @@ export const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, keyStatuses }) =
   const { row1, row2, row3 } = layout;
 
   return (
-    <div className="w-full max-w-lg mx-auto flex flex-col items-center mt-4 md:mt-8 px-1 sm:px-0 pb-4" dir="ltr">
+    <div className="w-full max-w-lg mx-auto flex flex-col items-center px-1 sm:px-0 pb-2">
       <div role="group" className="w-full flex justify-center" aria-label="Keyboard row 1">
-        {row1.map(key => <Key key={key} value={key} onKeyPress={onKeyPress} status={keyStatuses[key.toUpperCase()]} />)}
+        {row1.map(key => <Key key={key} value={key} onKeyPress={onKeyPress} status={keyStatuses[key.toUpperCase()]} isArabic={isArabic} />)}
       </div>
       <div role="group" className="w-full flex justify-center" aria-label="Keyboard row 2">
-        {row2.map(key => <Key key={key} value={key} onKeyPress={onKeyPress} status={keyStatuses[key.toUpperCase()]} />)}
+        {row2.map(key => <Key key={key} value={key} onKeyPress={onKeyPress} status={keyStatuses[key.toUpperCase()]} isArabic={isArabic} />)}
       </div>
       <div role="group" className="w-full flex justify-center" aria-label="Keyboard row 3">
-        <Key value="Enter" onKeyPress={onKeyPress} flex={1.5} isSpecial />
-        {row3.map(key => <Key key={key} value={key} onKeyPress={onKeyPress} status={keyStatuses[key.toUpperCase()]} />)}
-        <Key value="Backspace" onKeyPress={onKeyPress} flex={1.5} isSpecial />
+        <Key value="Enter" onKeyPress={onKeyPress} flex={1.5} isSpecial isArabic={isArabic} specialKeyText={t('Enter')} />
+        {row3.map(key => <Key key={key} value={key} onKeyPress={onKeyPress} status={keyStatuses[key.toUpperCase()]} isArabic={isArabic} />)}
+        <Key value="Backspace" onKeyPress={onKeyPress} flex={1.5} isSpecial isArabic={isArabic} />
       </div>
     </div>
   );

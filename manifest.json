@@ -1,0 +1,22 @@
+
+{
+  "name": "İslami Wordle",
+  "short_name": "İslami Wordle",
+  "description": "An Islamic-themed Wordle-style word guessing game where you try to guess a word related to Islamic culture and concepts. The game works fully offline.",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/index.html",
+  "display": "standalone",
+  "theme_color": "#10b981",
+  "background_color": "#111827"
+}

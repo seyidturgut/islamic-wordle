@@ -1,8 +1,11 @@
+
+
 import React, { useState, useCallback } from 'react';
 import GameScreen from './src/features/game/GameScreen';
 import SettingsScreen from './src/features/settings/SettingsScreen';
 import HomeScreen from './src/features/home/HomeScreen';
-import { GameMode } from './src/types';
+// FIX: Corrected import path for types to use the root re-exporting types.ts
+import { GameMode } from './types';
 
 export type Screen = 'home' | 'game' | 'settings';
 
@@ -33,10 +36,8 @@ const App: React.FC = () => {
     };
 
     return (
-        <div className="bg-gray-50 dark:bg-gray-900 text-black dark:text-white min-h-screen font-sans">
-           <div className="h-screen w-screen flex flex-col items-center">
-             {renderScreen()}
-           </div>
+        <div className="bg-gray-50 dark:bg-gray-900 text-black dark:text-white h-screen w-screen font-sans flex flex-col overflow-hidden">
+           {renderScreen()}
         </div>
     );
 };

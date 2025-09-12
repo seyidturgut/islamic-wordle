@@ -1,20 +1,29 @@
+// FIX: Implemented the share formatter utility.
+import { Guess, LetterStatus } from '../types';
 
-import { Guess, LetterStatus } from "../types";
-import { MAX_GUESSES } from "../../constants";
-
-const statusToEmoji = {
-    [LetterStatus.Correct]: '🟩',
-    [LetterStatus.Present]: '🟨',
-    [LetterStatus.Absent]: '⬛',
-    [LetterStatus.Default]: '⬜',
+const emojiMap: { [key in LetterStatus]: string } = {
+  [LetterStatus.Correct]: '🟩',
+  [LetterStatus.Present]: '🟨',
+  [LetterStatus.Absent]: '⬛',
+  [LetterStatus.Default]: '⬜',
 };
 
-export const formatShareText = (guesses: Guess[], isWin: boolean): string => {
-    const title = `İslami Wordle - ${isWin ? guesses.length : 'X'}/${MAX_GUESSES}`;
-    
-    const grid = guesses.map(guess => 
-        guess.statuses.map(status => statusToEmoji[status]).join('')
-    ).join('\n');
+export const formatShareText = (
+  solution: string,
+  guesses: Guess[],
+  isWin: boolean,
+  isDaily: boolean,
+  language: string
+): string => {
+  const title = `İslami Wordle (${language.toUpperCase()}) ${isDaily ? new Date().toLocaleDateString(language) : ''}`;
+  const attemptCount = isWin ? guesses.length : 'X';
+  const header = `${title} ${attemptCount}/6\n`;
 
-    return `${title}\n\n${grid}`;
+  const grid = guesses
+    .map(guess =>
+      guess.statuses.map(status => emojiMap[status]).join('')
+    )
+    .join('\n');
+    
+  return `${header}\n${grid}\n\n`;
 };

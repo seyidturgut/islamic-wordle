@@ -1,5 +1,7 @@
+
 import React from 'react';
-import { LetterStatus } from '../src/types.ts';
+// FIX: Corrected import path for types to use the root re-exporting types.ts
+import { LetterStatus } from '../types';
 import { useSettings } from '../src/hooks/useSettings.ts';
 
 interface TileProps {
@@ -14,6 +16,7 @@ interface TileProps {
 }
 
 export const Tile: React.FC<TileProps> = ({ letter, status = LetterStatus.Default, isRevealing, isTyped, animationDelay = 0, isStatic = false, isSubmitted = false, isWinningTile = false }) => {
+  // FIX: The `useSettings` hook now provides the `t` function.
   const { t } = useSettings();
 
   const statusStyles = {
