@@ -149,7 +149,15 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [settings, setSettings] = useState<AppSettings>(() => {
     try {
       const storedSettings = localStorage.getItem('islamicWordleSettings');
-      return storedSettings ? { ...defaultSettings, ...JSON.parse(storedSettings) } : defaultSettings;
+      const parsed = storedSettings ? JSON.parse(storedSettings) : {};
+      const mergedSettings = { ...defaultSettings, ...parsed };
+
+      // Ensure language is always valid to prevent translation issues
+      if (mergedSettings.language !== 'en' && mergedSettings.language !== 'tr') {
+        mergedSettings.language = 'tr';
+      }
+
+      return mergedSettings;
     } catch (e) {
       return defaultSettings;
     }

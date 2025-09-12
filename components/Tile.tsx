@@ -51,12 +51,12 @@ export const Tile: React.FC<TileProps> = ({ letter, status = LetterStatus.Defaul
   const backFaceClasses = `${statusStyles[status]} rounded-md`;
   
   const isRevealed = isSubmitted && !isRevealing;
-  const winningAnimationClass = isWinningTile && isRevealed ? 'animate-jump' : '';
+  const winningAnimationClass = isWinningTile && isRevealed ? 'animate-bounce-short' : '';
   const tileContainerClasses = `tile ${isRevealing ? 'is-revealing' : ''} ${isRevealed ? 'is-revealed' : ''} ${winningAnimationClass}`;
 
   const animationStyle: React.CSSProperties = {};
   if (isWinningTile && isRevealed) {
-      // Delay the jump so it happens after the flip transition completes (600ms).
+      // Delay the animation so it happens after the flip transition completes (600ms).
       animationStyle.animationDelay = `${600 + animationDelay}ms`;
   }
 

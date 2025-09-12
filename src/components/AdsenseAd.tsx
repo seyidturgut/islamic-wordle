@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 // Define the type for the adsbygoogle array on the window object
 declare global {
@@ -8,29 +8,53 @@ declare global {
 }
 
 export const AdsenseAd: React.FC = () => {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-        try {
-          (window.adsbygoogle = window.adsbygoogle || []).push({});
-        } catch (e) {
-          console.error('Adsense error:', e);
-        }
-    }, 100);
+  const adContainerRef = useRef<HTMLDivElement>(null);
+  const adPushedRef = useRef(false);
 
-    return () => clearTimeout(timer);
+  useEffect(() => {
+    const adContainer = adContainerRef.current;
+    if (!adContainer) return;
+
+    // Use ResizeObserver to push the ad only when the container has a valid width.
+    // This is the most reliable way to avoid the "availableWidth=0" error, as it waits
+    // for the browser to confirm the layout is stable and sized.
+    const observer = new ResizeObserver(entries => {
+      // Check if the ad has already been pushed.
+      if (adPushedRef.current) {
+        observer.disconnect();
+        return;
+      }
+      
+      for (const entry of entries) {
+        if (entry.contentRect.width > 0) {
+          try {
+            (window.adsbygoogle = window.adsbygoogle || []).push({});
+            // Mark the ad as pushed to prevent this from running again.
+            adPushedRef.current = true;
+          } catch (e) {
+            console.error('Adsense push error:', e);
+          }
+          // Once the ad is pushed, we can stop observing.
+          observer.disconnect();
+        }
+      }
+    });
+
+    observer.observe(adContainer);
+
+    return () => {
+      observer.disconnect();
+    };
   }, []);
 
-  // This JSX represents the <ins> tag provided in the AdSense code.
-  // A min-height is added to ensure the container has dimensions when the ad script executes.
   return (
-    <div className="my-4 w-full min-h-[50px]" aria-hidden="true">
+    <div ref={adContainerRef} className="my-4 w-full min-h-[50px]" aria-hidden="true">
       <ins
         className="adsbygoogle"
         style={{ display: 'block' }}
         data-ad-format="auto"
         data-ad-client="ca-pub-9655763725113422"
         data-ad-slot="9921304398"
-        data-full-width-responsive="true"
       ></ins>
     </div>
   );
