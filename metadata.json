@@ -1,0 +1,5 @@
+{
+  "name": "İslami Wordle",
+  "description": "An Islamic-themed Wordle-style word guessing game where you try to guess a word related to Islamic culture and concepts. The game works fully offline.",
+  "requestFramePermissions": []
+}

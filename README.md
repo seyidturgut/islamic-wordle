@@ -1,11 +1,16 @@
-<div align="center">
+# İslami Wordle - İslami Kelime Oyunu
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+Bu proje, "Wordle" mekaniklerine dayanan, İslami temalı kelimelerin tahmin edildiği bir web tabanlı kelime oyunudur. Geniş bir çevrimdışı kelime listesi sayesinde internet bağlantısı olmadan da oynanabilir.
 
-  <h1>Built with AI Studio</h2>
+## Teknolojiler
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+Bu proje aşağıdaki modern web teknolojileri kullanılarak oluşturulmuştur:
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+-   **Framework**: React
+-   **Dil**: TypeScript
+-   **Styling**: Tailwind CSS
+-   **State Management**: React Context
 
-</div>
+## Nasıl Çalıştırılır?
+
+Proje, herhangi bir build adımı gerektirmeyen basit bir yapıya sahiptir. `index.html` dosyasını bir web sunucusu üzerinden yayınlayarak veya doğrudan tarayıcıda açarak oyunu başlatabilirsiniz. Gerekli tüm kütüphaneler (React, ReactDOM) bir CDN üzerinden yüklenmektedir.
