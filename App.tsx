@@ -1,15 +1,16 @@
-
-
 import React, { useState, useCallback } from 'react';
 import GameScreen from './src/features/game/GameScreen';
 import SettingsScreen from './src/features/settings/SettingsScreen';
 import HomeScreen from './src/features/home/HomeScreen';
-// FIX: Corrected import path for types to use the root re-exporting types.ts
 import { GameMode } from './types';
+import { usePwaInstall } from './src/hooks/usePwaInstall';
+import { InstallPwaPrompt } from './components/InstallPwaPrompt';
+
 
 export type Screen = 'home' | 'game' | 'settings';
 
 const App: React.FC = () => {
+    const { isInstallVisible, isIos, handleInstall, handleDismiss } = usePwaInstall();
     const [currentScreen, setCurrentScreen] = useState<Screen>('home');
     const [gameMode, setGameMode] = useState<GameMode>('daily');
 
@@ -38,6 +39,13 @@ const App: React.FC = () => {
     return (
         <div className="bg-gray-50 dark:bg-gray-900 text-black dark:text-white h-screen w-screen font-sans flex flex-col overflow-hidden">
            {renderScreen()}
+           {isInstallVisible && (
+              <InstallPwaPrompt
+                isIos={isIos}
+                onInstall={handleInstall}
+                onDismiss={handleDismiss}
+              />
+           )}
         </div>
     );
 };
