@@ -28,7 +28,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartGame, onNavigate }) => {
 
 
     return (
-        <div className="flex flex-col items-center justify-between h-full w-full max-w-lg">
+        <div className="flex flex-col items-center justify-between flex-grow w-full max-w-lg">
             <Header
                 onShowHelp={() => setHowToPlayOpen(true)}
                 onShowSettings={() => onNavigate('settings')}

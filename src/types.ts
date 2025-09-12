@@ -43,3 +43,14 @@ export interface DailyChallengeState {
   gameState: GameState;
   date: string;
 }
+
+export type BadgeTier = 'bronze' | 'silver' | 'gold' | 'diamond';
+
+export interface Badge {
+  id: string;
+  tier: BadgeTier;
+  nameKey: string;
+  descriptionKey: string;
+  icon: string; // Emoji
+  unlockFn: (stats: GameStats, guesses: Guess[]) => boolean;
+}

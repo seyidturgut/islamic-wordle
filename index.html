@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
@@ -52,6 +51,14 @@
               '60%': { transform: 'translateY(-7px)' },
               '80%': { transform: 'translateY(0)' },
             },
+            'shimmer': {
+              '0%': { transform: 'translateX(-100%) skewX(-20deg)' },
+              '100%': { transform: 'translateX(100%) skewX(-20deg)' },
+            },
+            'glow': {
+              '0%, 100%': { filter: 'drop-shadow(0 0 3px #fef08a)' },
+              '50%': { filter: 'drop-shadow(0 0 12px #facc15)' },
+            }
           },
           animation: {
             'pop-in': 'pop-in 0.2s ease-out',
@@ -60,6 +67,8 @@
             'slide-up': 'slide-up 0.4s ease-out forwards',
             'bounce-short': 'bounce-short 0.5s ease-in-out',
             'jump': 'jump 0.8s ease-out',
+            'glow': 'glow 2.5s ease-in-out infinite',
+            'shimmer': 'shimmer 1.5s linear infinite',
           }
         }
       }
@@ -70,12 +79,8 @@
       --tile-size: clamp(50px, 15vw, 65px);
       --tile-gap: 6px;
     }
-    html, body {
-        height: 100%;
-        width: 100%;
-        overflow: hidden;
-        position: fixed;
-        overscroll-behavior: none; /* Disables pull-to-refresh */
+    body {
+        overscroll-behavior: none; /* Disables pull-to-refresh but allows scrolling */
     }
     .tile {
         width: var(--tile-size);

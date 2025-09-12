@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import GameScreen from './src/features/game/GameScreen';
 import SettingsScreen from './src/features/settings/SettingsScreen';
@@ -37,7 +38,7 @@ const App: React.FC = () => {
     };
 
     return (
-        <div className="bg-gray-50 dark:bg-gray-900 text-black dark:text-white h-screen w-screen font-sans flex flex-col overflow-hidden">
+        <div className="bg-gray-50 dark:bg-gray-900 text-black dark:text-white min-h-screen w-full font-sans flex flex-col">
            {renderScreen()}
            {isInstallVisible && (
               <InstallPwaPrompt

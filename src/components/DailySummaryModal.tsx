@@ -2,11 +2,13 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 import { useSettings } from '../hooks/useSettings';
-import { GameStats, Guess } from '../types';
+import { GameStats, Guess, Badge } from '../types';
 import StatsChart from './StatsChart';
 import { StatsSummary } from './StatsSummary';
 import { formatShareText } from '../utils/shareFormatter';
 import { Toast } from '../../components/Toast';
+import { checkAndUnlockBadges } from '../services/badgeService';
+import BadgeDisplay from './BadgeDisplay';
 
 interface DailySummaryModalProps {
   isOpen: boolean;
@@ -30,6 +32,7 @@ export const DailySummaryModal: React.FC<DailySummaryModalProps> = ({
   const { settings, t } = useSettings();
   const modalRef = useRef<HTMLDivElement>(null);
   const [toastMessage, setToastMessage] = useState('');
+  const [newlyUnlockedBadge, setNewlyUnlockedBadge] = useState<Badge | null>(null);
 
   useFocusTrap(modalRef, isOpen);
 
@@ -37,13 +40,21 @@ export const DailySummaryModal: React.FC<DailySummaryModalProps> = ({
     if (isOpen) {
         // Reset scroll to top when modal opens
         modalRef.current?.querySelector('.overflow-y-auto')?.scrollTo(0, 0);
+        
+        // Check for new badges only on a win
+        if (isWin) {
+            const newBadge = checkAndUnlockBadges(stats, guesses, settings.language);
+            setNewlyUnlockedBadge(newBadge);
+        } else {
+            setNewlyUnlockedBadge(null); // Ensure no badge is shown on a loss
+        }
     }
-  }, [isOpen]);
+  }, [isOpen, isWin, stats, guesses, settings.language]);
 
   if (!isOpen) return null;
 
   const handleShare = () => {
-    const shareText = formatShareText(solution, guesses, isWin, true, settings.language);
+    const shareText = formatShareText(solution, guesses, isWin, true, settings.language, newlyUnlockedBadge, t);
     if (navigator.share) {
       navigator.share({
         text: shareText,
@@ -82,6 +93,15 @@ export const DailySummaryModal: React.FC<DailySummaryModalProps> = ({
                 <p className="text-2xl font-bold uppercase tracking-widest text-emerald-500">{solution}</p>
                 <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{solutionDefinition}</p>
             </div>
+
+            {newlyUnlockedBadge && (
+                <div className="my-4 text-center">
+                    <h3 className="text-lg font-bold text-amber-400 animate-fade-in">{t('newBadgeUnlocked')}</h3>
+                    <div className="mt-2 flex justify-center">
+                        <BadgeDisplay badge={newlyUnlockedBadge} isNewlyUnlocked={true} />
+                    </div>
+                </div>
+            )}
             
             <StatsSummary stats={stats} />
             <StatsChart stats={stats} />

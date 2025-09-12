@@ -264,7 +264,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
   }
 
   return (
-    <div className="flex flex-col h-full w-full max-w-lg mx-auto">
+    <div className="flex flex-col flex-grow w-full max-w-lg mx-auto">
       <div className="absolute w-px h-px overflow-hidden" style={{clip: 'rect(0 0 0 0)', clipPath: 'inset(50%)'}} aria-live="polite" aria-atomic="true">
         {announcement}
       </div>

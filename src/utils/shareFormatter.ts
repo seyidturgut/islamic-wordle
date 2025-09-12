@@ -1,5 +1,5 @@
 // FIX: Implemented the share formatter utility.
-import { Guess, LetterStatus } from '../types';
+import { Guess, LetterStatus, Badge } from '../types';
 
 const emojiMap: { [key in LetterStatus]: string } = {
   [LetterStatus.Correct]: '🟩',
@@ -13,7 +13,9 @@ export const formatShareText = (
   guesses: Guess[],
   isWin: boolean,
   isDaily: boolean,
-  language: string
+  language: string,
+  newlyUnlockedBadge: Badge | null,
+  t: (key: string) => string,
 ): string => {
   const title = `İslami Wordle (${language.toUpperCase()}) ${isDaily ? new Date().toLocaleDateString(language) : ''}`;
   const attemptCount = isWin ? guesses.length : 'X';
@@ -25,5 +27,10 @@ export const formatShareText = (
     )
     .join('\n');
     
-  return `${header}\n${grid}\n\n`;
+  let badgeText = '';
+  if (newlyUnlockedBadge) {
+    badgeText = `\n\n🏆 ${t('unlockedBadge')}: ${t(newlyUnlockedBadge.nameKey)}`;
+  }
+    
+  return `${header}\n${grid}${badgeText}\n\n`;
 };

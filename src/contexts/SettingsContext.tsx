@@ -77,6 +77,19 @@ const translations: Record<string, Record<string, string>> = {
     areYouSure: "Are you sure?",
     // Sharing
     share: 'Share',
+    // Badges
+    newBadgeUnlocked: 'NEW BADGE UNLOCKED!',
+    unlockedBadge: 'Unlocked Badge',
+    badge_streak3_name: 'Rising Star',
+    badge_streak3_desc: 'Achieved a 3-day streak.',
+    badge_streak7_name: 'Consistent Scholar',
+    badge_streak7_desc: 'Achieved a 7-day streak.',
+    badge_streak15_name: 'Devoted Learner',
+    badge_streak15_desc: 'Achieved a 15-day streak.',
+    badge_streak30_name: 'Master of Patience',
+    badge_streak30_desc: 'Achieved a 30-day streak.',
+    badge_perfect_name: 'Divine Inspiration',
+    badge_perfect_desc: 'Guessed the word in a single try.',
   },
   tr: {
     // Modal titles
@@ -150,6 +163,19 @@ const translations: Record<string, Record<string, string>> = {
     areYouSure: "Emin misiniz?",
     // Sharing
     share: 'Paylaş',
+     // Badges
+    newBadgeUnlocked: 'YENİ ROZET KAZANILDI!',
+    unlockedBadge: 'Kazanılan Rozet',
+    badge_streak3_name: 'Yükselen Yıldız',
+    badge_streak3_desc: '3 günlük bir seriye ulaştın.',
+    badge_streak7_name: 'İstikrarlı Alim',
+    badge_streak7_desc: '7 günlük bir seriye ulaştın.',
+    badge_streak15_name: 'Sadık Öğrenci',
+    badge_streak15_desc: '15 günlük bir seriye ulaştın.',
+    badge_streak30_name: 'Sabır Ustası',
+    badge_streak30_desc: '30 günlük bir seriye ulaştın.',
+    badge_perfect_name: 'İlahi İlham',
+    badge_perfect_desc: 'Kelimeyi tek denemede bildin.',
   },
   ar: {
     // Modal titles
@@ -223,6 +249,19 @@ const translations: Record<string, Record<string, string>> = {
     areYouSure: "هل أنت متأكد؟",
     // Sharing
     share: 'مشاركة',
+    // Badges
+    newBadgeUnlocked: 'تم فتح وسام جديد!',
+    unlockedBadge: 'الوسام المفتوح',
+    badge_streak3_name: 'النجم الصاعد',
+    badge_streak3_desc: 'أحرزت سلسلة انتصارات لـ 3 أيام.',
+    badge_streak7_name: 'العالم المثابر',
+    badge_streak7_desc: 'أحرزت سلسلة انتصارات لـ 7 أيام.',
+    badge_streak15_name: 'المتعلم المخلص',
+    badge_streak15_desc: 'أحرزت سلسلة انتصارات لـ 15 يومًا.',
+    badge_streak30_name: 'سيد الصبر',
+    badge_streak30_desc: 'أحرزت سلسلة انتصارات لـ 30 يومًا.',
+    badge_perfect_name: 'الإلهام الإلهي',
+    badge_perfect_desc: 'خمنت الكلمة من المحاولة الأولى.',
   },
 };
 interface SettingsContextType {

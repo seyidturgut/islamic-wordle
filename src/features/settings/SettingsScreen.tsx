@@ -45,7 +45,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({ navigate }) => {
   );
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-4 h-full flex flex-col">
+    <div className="w-full max-w-2xl mx-auto p-4 flex-grow flex flex-col">
       <header className="flex justify-between items-center mb-6">
         <button onClick={() => navigate('home')} className={`p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 ${focusRingClasses}`}>
            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 rtl-flip" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
