@@ -1,5 +1,5 @@
 import React from 'react';
-import { Guess } from '../src/types';
+import { Guess, GameState } from '../src/types';
 import { Tile } from './Tile';
 import { MAX_GUESSES } from '../constants';
 
@@ -9,9 +9,10 @@ interface GameBoardProps {
   wordLength: number;
   isRevealing: boolean;
   shakeCurrentRow: boolean;
+  gameState: GameState;
 }
 
-export const GameBoard: React.FC<GameBoardProps> = ({ guesses, currentGuess, wordLength, isRevealing, shakeCurrentRow }) => {
+export const GameBoard: React.FC<GameBoardProps> = ({ guesses, currentGuess, wordLength, isRevealing, shakeCurrentRow, gameState }) => {
   const emptyRows = guesses.length < MAX_GUESSES - 1
     ? Array.from(Array(MAX_GUESSES - 1 - guesses.length))
     : [];
@@ -30,6 +31,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ guesses, currentGuess, wor
               isRevealing={isRevealing && guesses.length - 1 === i}
               animationDelay={j * 100}
               isSubmitted
+              isWinningTile={gameState === 'won' && guesses.length - 1 === i}
             />
           ))}
         </div>

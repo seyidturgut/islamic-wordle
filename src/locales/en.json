@@ -50,5 +50,6 @@
   "avgGuesses": "Avg. Guesses",
   "dailyChallenge": "Daily Challenge",
   "practiceMode": "Practice Mode",
+  "randomWord": "Random Word",
   "guessSummary": "Guess {guessNum}"
 }

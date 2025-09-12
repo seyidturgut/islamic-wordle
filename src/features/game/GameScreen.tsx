@@ -106,26 +106,46 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
   const showToast = (message: string, duration = 1500) => {
     setToastMessage(message);
   };
+  
+  const getGuessWithStatuses = (guess: string, solution: string): Guess => {
+    const guessLetters = guess.split('');
+    const solutionLetters = solution.split('');
+    const statuses: LetterStatus[] = Array(wordLength).fill(LetterStatus.Absent);
+    const letterCounts = solutionLetters.reduce((acc, letter) => {
+        acc[letter] = (acc[letter] || 0) + 1;
+        return acc;
+    }, {} as Record<string, number>);
 
-  const handleKeyPress = useCallback((key: string) => {
-    if (gameState !== 'playing' || isRevealing) return;
+    guessLetters.forEach((letter, i) => {
+        if (letter === solutionLetters[i]) {
+            statuses[i] = LetterStatus.Correct;
+            letterCounts[letter]--;
+        }
+    });
 
-    if (key === 'Enter') {
-      submitGuess();
-      return;
-    }
+    guessLetters.forEach((letter, i) => {
+        if (statuses[i] !== LetterStatus.Correct && solutionLetters.includes(letter) && letterCounts[letter] > 0) {
+            statuses[i] = LetterStatus.Present;
+            letterCounts[letter]--;
+        }
+    });
+    
+    return { letters: guessLetters, statuses };
+  };
 
-    if (key === 'Backspace') {
-      setCurrentGuess(prev => prev.slice(0, -1));
-      return;
-    }
-
-    const isValidKey = /^[a-zA-ZğüşıöçĞÜŞİÖÇ]$/.test(key);
-    if (isValidKey && currentGuess.length < wordLength) {
-      setCurrentGuess(prev => prev + key.toUpperCase());
-      playSound('keyPress', settings.hapticsEnabled);
-    }
-  }, [gameState, isRevealing, currentGuess, wordLength, settings.hapticsEnabled, t]);
+  const updateKeyStatuses = (guess: Guess) => {
+    setKeyStatuses(prev => {
+        const newStatuses = { ...prev };
+        guess.letters.forEach((letter, i) => {
+            const status = guess.statuses[i];
+            const existingStatus = newStatuses[letter];
+            if (existingStatus === LetterStatus.Correct) return;
+            if (existingStatus === LetterStatus.Present && status === LetterStatus.Absent) return;
+            newStatuses[letter] = status;
+        });
+        return newStatuses;
+    });
+  };
 
   const submitGuess = () => {
     if (currentGuess.length !== wordLength) {
@@ -187,45 +207,25 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
     }, wordLength * 100 + 100);
   };
 
-  const getGuessWithStatuses = (guess: string, solution: string): Guess => {
-    const guessLetters = guess.split('');
-    const solutionLetters = solution.split('');
-    const statuses: LetterStatus[] = Array(wordLength).fill(LetterStatus.Absent);
-    const letterCounts = solutionLetters.reduce((acc, letter) => {
-        acc[letter] = (acc[letter] || 0) + 1;
-        return acc;
-    }, {} as Record<string, number>);
+  const handleKeyPress = useCallback((key: string) => {
+    if (gameState !== 'playing' || isRevealing) return;
 
-    guessLetters.forEach((letter, i) => {
-        if (letter === solutionLetters[i]) {
-            statuses[i] = LetterStatus.Correct;
-            letterCounts[letter]--;
-        }
-    });
+    if (key === 'Enter') {
+      submitGuess();
+      return;
+    }
 
-    guessLetters.forEach((letter, i) => {
-        if (statuses[i] !== LetterStatus.Correct && solutionLetters.includes(letter) && letterCounts[letter] > 0) {
-            statuses[i] = LetterStatus.Present;
-            letterCounts[letter]--;
-        }
-    });
-    
-    return { letters: guessLetters, statuses };
-  };
+    if (key === 'Backspace') {
+      setCurrentGuess(prev => prev.slice(0, -1));
+      return;
+    }
 
-  const updateKeyStatuses = (guess: Guess) => {
-    setKeyStatuses(prev => {
-        const newStatuses = { ...prev };
-        guess.letters.forEach((letter, i) => {
-            const status = guess.statuses[i];
-            const existingStatus = newStatuses[letter];
-            if (existingStatus === LetterStatus.Correct) return;
-            if (existingStatus === LetterStatus.Present && status === LetterStatus.Absent) return;
-            newStatuses[letter] = status;
-        });
-        return newStatuses;
-    });
-  };
+    const isValidKey = /^[a-zA-ZğüşıöçĞÜŞİÖÇ]$/.test(key);
+    if (isValidKey && currentGuess.length < wordLength) {
+      setCurrentGuess(prev => prev + key.toLocaleUpperCase(settings.language));
+      playSound('keyPress', settings.hapticsEnabled);
+    }
+  }, [gameState, isRevealing, currentGuess, wordLength, settings, t, submitGuess]);
 
   useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
@@ -263,7 +263,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
       <div className="absolute w-px h-px overflow-hidden" style={{clip: 'rect(0 0 0 0)', clipPath: 'inset(50%)'}} aria-live="polite" aria-atomic="true">
         {announcement}
       </div>
-      <Header onBack={onBack} onShowHelp={() => setHowToPlayOpen(true)} />
+      <Header onBack={onBack} onShowHelp={() => setHowToPlayOpen(true)} gameMode={gameMode} onRandomize={handlePlayAgain} />
       {toastMessage && <Toast message={toastMessage} onHide={() => setToastMessage('')} />}
       <main className="flex-grow flex flex-col justify-center items-center">
         <GameBoard
@@ -272,6 +272,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
           wordLength={wordLength}
           isRevealing={isRevealing}
           shakeCurrentRow={shakeCurrentRow}
+          gameState={gameState}
         />
       </main>
       <Keyboard onKeyPress={handleKeyPress} keyStatuses={keyStatuses} />

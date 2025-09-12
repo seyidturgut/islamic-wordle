@@ -50,5 +50,6 @@
   "avgGuesses": "Ort. Tahmin",
   "dailyChallenge": "Günlük Görev",
   "practiceMode": "Alıştırma Modu",
+  "randomWord": "Rastgele Kelime",
   "guessSummary": "Tahmin {guessNum}"
 }

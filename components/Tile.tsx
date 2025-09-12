@@ -10,9 +10,10 @@ interface TileProps {
   animationDelay?: number;
   isStatic?: boolean;
   isSubmitted?: boolean;
+  isWinningTile?: boolean;
 }
 
-export const Tile: React.FC<TileProps> = ({ letter, status = LetterStatus.Default, isRevealing, isTyped, animationDelay = 0, isStatic = false, isSubmitted = false }) => {
+export const Tile: React.FC<TileProps> = ({ letter, status = LetterStatus.Default, isRevealing, isTyped, animationDelay = 0, isStatic = false, isSubmitted = false, isWinningTile = false }) => {
   const { t } = useSettings();
 
   const statusStyles = {
@@ -48,11 +49,20 @@ export const Tile: React.FC<TileProps> = ({ letter, status = LetterStatus.Defaul
 
   const frontFaceClasses = `border-2 rounded-md ${letter ? 'border-gray-400 dark:border-gray-600' : 'border-gray-500 dark:border-gray-700'} ${isTyped ? 'animate-pop-in': ''}`;
   const backFaceClasses = `${statusStyles[status]} rounded-md`;
-  const tileContainerClasses = `tile ${isRevealing ? 'is-revealing' : ''} ${isSubmitted && !isRevealing ? 'is-revealed' : ''}`;
+  
+  const isRevealed = isSubmitted && !isRevealing;
+  const winningAnimationClass = isWinningTile && isRevealed ? 'animate-jump' : '';
+  const tileContainerClasses = `tile ${isRevealing ? 'is-revealing' : ''} ${isRevealed ? 'is-revealed' : ''} ${winningAnimationClass}`;
+
+  const animationStyle: React.CSSProperties = {};
+  if (isWinningTile && isRevealed) {
+      // Delay the jump so it happens after the flip transition completes (600ms).
+      animationStyle.animationDelay = `${600 + animationDelay}ms`;
+  }
 
 
   return (
-    <div className={tileContainerClasses} aria-label={ariaLabel}>
+    <div className={tileContainerClasses} aria-label={ariaLabel} style={animationStyle}>
       <div className="tile-inner" style={{ transitionDelay: `${animationDelay}ms` }}>
         <div className={`tile-face ${frontFaceClasses}`}>
           {letter}

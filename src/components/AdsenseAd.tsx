@@ -9,17 +9,21 @@ declare global {
 
 export const AdsenseAd: React.FC = () => {
   useEffect(() => {
-    try {
-      // This script corresponds to the (adsbygoogle = window.adsbygoogle || []).push({}); call
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (e) {
-      console.error('Adsense error:', e);
-    }
+    const timer = setTimeout(() => {
+        try {
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+        } catch (e) {
+          console.error('Adsense error:', e);
+        }
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, []);
 
-  // This JSX represents the <ins> tag provided in the AdSense code
+  // This JSX represents the <ins> tag provided in the AdSense code.
+  // A min-height is added to ensure the container has dimensions when the ad script executes.
   return (
-    <div className="my-4 w-full" aria-hidden="true">
+    <div className="my-4 w-full min-h-[50px]" aria-hidden="true">
       <ins
         className="adsbygoogle"
         style={{ display: 'block' }}

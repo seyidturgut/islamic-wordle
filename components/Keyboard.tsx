@@ -1,5 +1,6 @@
 import React from 'react';
 import { LetterStatus } from '../src/types';
+import { useSettings } from '../src/hooks/useSettings';
 
 interface KeyboardProps {
   onKeyPress: (key: string) => void;
@@ -53,10 +54,24 @@ const Key: React.FC<{
 };
 
 export const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, keyStatuses }) => {
-  const row1 = ['E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'Ğ', 'Ü'];
-  const row2 = ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ş', 'İ'];
-  const row3 = ['Enter', 'Z', 'C', 'V', 'B', 'N', 'M', 'Ö', 'Ç', 'Backspace'];
-  
+  const { settings } = useSettings();
+
+  const layouts = {
+    tr: {
+      row1: ['E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'Ğ', 'Ü'],
+      row2: ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ş', 'İ'],
+      row3: ['Z', 'C', 'V', 'B', 'N', 'M', 'Ö', 'Ç'],
+    },
+    en: {
+      row1: ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+      row2: ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+      row3: ['Z', 'X', 'C', 'V', 'B', 'N', 'M'],
+    }
+  };
+
+  const layout = layouts[settings.language] || layouts.tr;
+  const { row1, row2, row3 } = layout;
+
   return (
     <div className="w-full max-w-lg mx-auto flex flex-col items-center mt-4 md:mt-8 px-1 sm:px-0 pb-4">
       <div role="group" className="w-full flex justify-center" aria-label="Keyboard row 1">
@@ -67,7 +82,7 @@ export const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, keyStatuses }) =
       </div>
       <div role="group" className="w-full flex justify-center" aria-label="Keyboard row 3">
         <Key value="Enter" onKeyPress={onKeyPress} flex={1.5} isSpecial />
-        {row3.slice(1, -1).map(key => <Key key={key} value={key} onKeyPress={onKeyPress} status={keyStatuses[key]} />)}
+        {row3.map(key => <Key key={key} value={key} onKeyPress={onKeyPress} status={keyStatuses[key]} />)}
         <Key value="Backspace" onKeyPress={onKeyPress} flex={1.5} isSpecial />
       </div>
     </div>

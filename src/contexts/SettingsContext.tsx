@@ -44,10 +44,10 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   useEffect(() => {
     const fetchTranslations = async () => {
       try {
-        // Fetch translation files from the public path.
+        // Fetch translation files from the public path using relative paths for robustness.
         const [enResponse, trResponse] = await Promise.all([
-          fetch('/src/locales/en.json'),
-          fetch('/src/locales/tr.json'),
+          fetch('./src/locales/en.json'),
+          fetch('./src/locales/tr.json'),
         ]);
         if (!enResponse.ok || !trResponse.ok) {
           throw new Error('Network response was not ok');

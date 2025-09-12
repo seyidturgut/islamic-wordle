@@ -1,14 +1,17 @@
 import React from 'react';
 import { useSettings } from '../src/hooks/useSettings';
+import { GameMode } from '../src/types';
 
 interface HeaderProps {
     onShowHelp?: () => void;
     onShowStats?: () => void;
     onShowSettings?: () => void;
     onBack?: () => void;
+    gameMode?: GameMode;
+    onRandomize?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onShowHelp, onShowStats, onShowSettings, onBack }) => {
+export const Header: React.FC<HeaderProps> = ({ onShowHelp, onShowStats, onShowSettings, onBack, gameMode, onRandomize }) => {
     const { t } = useSettings();
     const focusRingClasses = "focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900";
 
@@ -33,6 +36,13 @@ export const Header: React.FC<HeaderProps> = ({ onShowHelp, onShowStats, onShowS
                 İslami Wordle
             </h1>
             <div className="w-12 flex justify-end">
+               {gameMode === 'practice' && onRandomize && (
+                 <button onClick={onRandomize} className={`p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 ${focusRingClasses}`} aria-label={t('randomWord')}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" />
+                    </svg>
+                 </button>
+               )}
                {onShowSettings && (
                  <button onClick={onShowSettings} className={`p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 ${focusRingClasses}`} aria-label={t('settings')}>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
