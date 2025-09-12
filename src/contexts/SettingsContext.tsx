@@ -6,9 +6,125 @@ type Translations = {
   [lang: string]: Record<string, string>;
 };
 
-// Since we can't statically analyze the JSON files with fetch,
 // we relax the TranslationKey type to a generic string.
 type TranslationKey = string;
+
+// By embedding the translation data directly, we eliminate the need for a network request (fetch),
+// which was failing during deployment due to incorrect file paths. This makes the translation
+// system more robust and independent of the server's file structure.
+const translations: Translations = {
+  en: {
+    "back": "Back",
+    "help": "Help",
+    "settings": "Settings",
+    "statistics": "Statistics",
+    "close": "Close",
+    "packs": "Word Packs",
+    "featureComingSoon": "Feature Coming Soon!",
+    "wordPackManagement": "Word pack management will be available here.",
+    "packDetails": "Pack Details",
+    "createPack": "Create Pack",
+    "areYouSure": "Are you sure?",
+    "modalWinTitle": "Congratulations!",
+    "modalLossTitle": "Better luck next time!",
+    "modalSolutionIs": "The word was:",
+    "playAgain": "Play Again",
+    "notEnoughLetters": "Not enough letters",
+    "notInWordList": "Word not in list",
+    "statusCorrect": "Correct",
+    "statusPresent": "Present",
+    "statusAbsent": "Absent",
+    "statusEmpty": "Empty",
+    "nextPuzzle": "Next Wordle in",
+    "copied": "Copied!",
+    "share": "Share",
+    "guessDistribution": "Guess Distribution",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "language": "Language",
+    "wordLength": "Word Length",
+    "haptics": "Haptic Feedback",
+    "howToPlayTitle": "How to Play",
+    "howToPlayIntro1": "Guess the word in 6 tries.",
+    "howToPlayIntro2": "Each guess must be a valid word of the correct length.",
+    "howToPlayIntro3": "After each guess, the color of the tiles will change to show how close your guess was to the word.",
+    "examples": "Examples",
+    "exampleWord1": "KIBLE",
+    "exampleCorrectDesc": "<b>K</b> is in the word and in the correct spot.",
+    "exampleWord2": "SALAT",
+    "examplePresentDesc": "<b>A</b> is in the word but in the wrong spot.",
+    "exampleWord3": "TAZIM",
+    "exampleAbsentDesc": "<b>İ</b> is not in the word in any spot.",
+    "startPlaying": "Start Playing!",
+    "gamesPlayed": "Played",
+    "winPercentage": "Win %",
+    "currentStreak": "Streak",
+    "maxStreak": "Max Streak",
+    "avgGuesses": "Avg. Guesses",
+    "dailyChallenge": "Daily Challenge",
+    "practiceMode": "Practice Mode",
+    "randomWord": "Random Word",
+    "guessSummary": "Guess {guessNum}"
+  },
+  tr: {
+    "back": "Geri",
+    "help": "Yardım",
+    "settings": "Ayarlar",
+    "statistics": "İstatistikler",
+    "close": "Kapat",
+    "packs": "Kelime Paketleri",
+    "featureComingSoon": "Bu Özellik Yakında Gelecek!",
+    "wordPackManagement": "Kelime paketi yönetimi burada mevcut olacak.",
+    "packDetails": "Paket Detayları",
+    "createPack": "Paket Oluştur",
+    "areYouSure": "Emin misiniz?",
+    "modalWinTitle": "Tebrikler!",
+    "modalLossTitle": "Bir dahaki sefere!",
+    "modalSolutionIs": "Doğru kelime:",
+    "playAgain": "Tekrar Oyna",
+    "notEnoughLetters": "Yeterli harf yok",
+    "notInWordList": "Kelime listede yok",
+    "statusCorrect": "Doğru",
+    "statusPresent": "Mevcut",
+    "statusAbsent": "Yok",
+    "statusEmpty": "Boş",
+    "nextPuzzle": "Sonraki Kelimeye Kalan Süre",
+    "copied": "Kopyalandı!",
+    "share": "Paylaş",
+    "guessDistribution": "Tahmin Dağılımı",
+    "theme": "Tema",
+    "light": "Açık",
+    "dark": "Koyu",
+    "system": "Sistem",
+    "language": "Dil",
+    "wordLength": "Kelime Uzunluğu",
+    "haptics": "Dokunsal Geribildirim",
+    "howToPlayTitle": "Nasıl Oynanır?",
+    "howToPlayIntro1": "Kelimeyi 6 denemede tahmin et.",
+    "howToPlayIntro2": "Her tahmin, kelime uzunluğunda anlamlı bir kelime olmalıdır.",
+    "howToPlayIntro3": "Her denemeden sonra kutuların renkleri, tahmininizin doğruluğuna göre değişecektir.",
+    "examples": "Örnekler",
+    "exampleWord1": "KIBLE",
+    "exampleCorrectDesc": "<b>K</b> harfi kelimede var ve doğru yerde.",
+    "exampleWord2": "SALAT",
+    "examplePresentDesc": "<b>A</b> harfi kelimede var ama yanlış yerde.",
+    "exampleWord3": "TAZİM",
+    "exampleAbsentDesc": "<b>İ</b> harfi kelimede yok.",
+    "startPlaying": "Oyna Başla!",
+    "gamesPlayed": "Oynanan",
+    "winPercentage": "Kazanma %",
+    "currentStreak": "Seri",
+    "maxStreak": "En Yüksek Seri",
+    "avgGuesses": "Ort. Tahmin",
+    "dailyChallenge": "Günlük Görev",
+    "practiceMode": "Alıştırma Modu",
+    "randomWord": "Rastgele Kelime",
+    "guessSummary": "Tahmin {guessNum}"
+  }
+};
+
 
 interface SettingsContextType {
   settings: AppSettings;
@@ -39,30 +155,8 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   });
 
-  const [translations, setTranslations] = useState<Translations | null>(null);
-
-  useEffect(() => {
-    const fetchTranslations = async () => {
-      try {
-        // Fetch translation files from the public path using relative paths for robustness.
-        const [enResponse, trResponse] = await Promise.all([
-          fetch('./src/locales/en.json'),
-          fetch('./src/locales/tr.json'),
-        ]);
-        if (!enResponse.ok || !trResponse.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const en = await enResponse.json();
-        const tr = await trResponse.json();
-        setTranslations({ en, tr });
-      } catch (error) {
-        console.error('Failed to load translation files:', error);
-        // Set empty translations to prevent app crash on access
-        setTranslations({ en: {}, tr: {} });
-      }
-    };
-    fetchTranslations();
-  }, []);
+  // The fetch call for translations has been removed.
+  // Translations are now embedded directly in the `translations` constant above.
 
   useEffect(() => {
     try {
@@ -91,11 +185,8 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
   
   const t = useMemo(() => (key: TranslationKey): string => {
-    if (!translations) {
-      return key; // Return key if translations are not loaded yet
-    }
     return translations[settings.language]?.[key] || key;
-  }, [settings.language, translations]);
+  }, [settings.language]);
 
   return (
     <SettingsContext.Provider value={{ settings, updateSettings, t }}>
