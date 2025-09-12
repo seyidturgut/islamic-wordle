@@ -20,7 +20,7 @@ export const Header: React.FC<HeaderProps> = ({ onShowHelp, onShowStats, onShowS
             <div className="w-12">
                 {onBack ? (
                     <button onClick={onBack} className={`p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 ${focusRingClasses}`} aria-label={t('back')}>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 rtl-flip" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
                     </button>

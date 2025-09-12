@@ -22,7 +22,7 @@ export type AppTheme = 'light' | 'dark' | 'system';
 
 export interface AppSettings {
   theme: AppTheme;
-  language: 'tr' | 'en';
+  language: 'tr' | 'en' | 'ar';
   wordLength: number;
   hapticsEnabled: boolean;
 }

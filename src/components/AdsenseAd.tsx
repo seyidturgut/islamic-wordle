@@ -48,11 +48,10 @@ export const AdsenseAd: React.FC = () => {
   }, []);
 
   return (
-    <div ref={adContainerRef} className="my-4 w-full min-h-[50px]" aria-hidden="true">
+    <div ref={adContainerRef} className="w-full flex justify-center items-center py-2" aria-hidden="true">
       <ins
         className="adsbygoogle"
-        style={{ display: 'block' }}
-        data-ad-format="auto"
+        style={{ display: 'inline-block', width: '320px', height: '100px' }}
         data-ad-client="ca-pub-9655763725113422"
         data-ad-slot="9921304398"
       ></ins>

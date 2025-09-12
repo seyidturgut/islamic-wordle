@@ -122,6 +122,61 @@ const translations: Translations = {
     "practiceMode": "Alıştırma Modu",
     "randomWord": "Rastgele Kelime",
     "guessSummary": "Tahmin {guessNum}"
+  },
+  ar: {
+    "back": "رجوع",
+    "help": "مساعدة",
+    "settings": "الإعدادات",
+    "statistics": "الإحصائيات",
+    "close": "إغلاق",
+    "packs": "حزم الكلمات",
+    "featureComingSoon": "الميزة قادمة قريبًا!",
+    "wordPackManagement": "إدارة حزم الكلمات ستكون متاحة هنا.",
+    "packDetails": "تفاصيل الحزمة",
+    "createPack": "إنشاء حزمة",
+    "areYouSure": "هل أنت متأكد؟",
+    "modalWinTitle": "تهانينا!",
+    "modalLossTitle": "حظ أوفر في المرة القادمة!",
+    "modalSolutionIs": "الكلمة كانت:",
+    "playAgain": "العب مرة أخرى",
+    "notEnoughLetters": "أحرف غير كافية",
+    "notInWordList": "الكلمة ليست في القائمة",
+    "statusCorrect": "صحيح",
+    "statusPresent": "موجود",
+    "statusAbsent": "غير موجود",
+    "statusEmpty": "فارغ",
+    "nextPuzzle": "الكلمة التالية بعد",
+    "copied": "تم النسخ!",
+    "share": "مشاركة",
+    "guessDistribution": "توزيع التخمينات",
+    "theme": "المظهر",
+    "light": "فاتح",
+    "dark": "داكن",
+    "system": "النظام",
+    "language": "اللغة",
+    "wordLength": "طول الكلمة",
+    "haptics": "ردود الفعل اللمسية",
+    "howToPlayTitle": "كيفية اللعب",
+    "howToPlayIntro1": "خمن الكلمة في 6 محاولات.",
+    "howToPlayIntro2": "يجب أن يكون كل تخمين كلمة صحيحة بالطول الصحيح.",
+    "howToPlayIntro3": "بعد كل تخمين، سيتغير لون المربعات ليظهر مدى قرب تخمينك من الكلمة.",
+    "examples": "أمثلة",
+    "exampleWord1": "كعبة",
+    "exampleCorrectDesc": "<b>ك</b> في الكلمة وفي المكان الصحيح.",
+    "exampleWord2": "صلاة",
+    "examplePresentDesc": "<b>ا</b> في الكلمة ولكن في المكان الخطأ.",
+    "exampleWord3": "تسبيح",
+    "exampleAbsentDesc": "<b>ي</b> ليست في الكلمة في أي مكان.",
+    "startPlaying": "ابدأ اللعب!",
+    "gamesPlayed": "لعبت",
+    "winPercentage": "فوز ٪",
+    "currentStreak": "سلسلة",
+    "maxStreak": "أقصى سلسلة",
+    "avgGuesses": "متوسط التخمينات",
+    "dailyChallenge": "التحدي اليومي",
+    "practiceMode": "وضع التدريب",
+    "randomWord": "كلمة عشوائية",
+    "guessSummary": "تخمين {guessNum}"
   }
 };
 
@@ -153,7 +208,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const mergedSettings = { ...defaultSettings, ...parsed };
 
       // Ensure language is always valid to prevent translation issues
-      if (mergedSettings.language !== 'en' && mergedSettings.language !== 'tr') {
+      if (!['tr', 'en', 'ar'].includes(mergedSettings.language)) {
         mergedSettings.language = 'tr';
       }
 
@@ -173,19 +228,19 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       console.error("Failed to save settings:", e);
     }
     
-    // Theme application
-    const body = document.querySelector('body');
+    // Theme and RTL application
     const isDarkMode = settings.theme === 'dark' || (settings.theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
     if (isDarkMode) {
         document.documentElement.classList.add('dark');
-        body?.classList.add('dark:bg-gray-900');
-        body?.classList.remove('bg-gray-50');
     } else {
         document.documentElement.classList.remove('dark');
-        body?.classList.add('bg-gray-50');
-        body?.classList.remove('dark:bg-gray-900');
     }
+    
+    // Set document language and direction
+    document.documentElement.lang = settings.language;
+    document.documentElement.dir = settings.language === 'ar' ? 'rtl' : 'ltr';
+
   }, [settings]);
 
   const updateSettings = (newSettings: AppSettings) => {

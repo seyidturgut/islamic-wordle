@@ -66,6 +66,11 @@ export const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, keyStatuses }) =
       row1: ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
       row2: ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
       row3: ['Z', 'X', 'C', 'V', 'B', 'N', 'M'],
+    },
+    ar: {
+      row1: ['ض', 'ص', 'ث', 'ق', 'ف', 'غ', 'ع', 'ه', 'خ', 'ح', 'ج'],
+      row2: ['ش', 'س', 'ي', 'ب', 'ل', 'ا', 'ت', 'ن', 'م', 'ك'],
+      row3: ['ظ', 'ط', 'ذ', 'د', 'ز', 'ر', 'و', 'ة', 'ى'],
     }
   };
 
@@ -73,16 +78,16 @@ export const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, keyStatuses }) =
   const { row1, row2, row3 } = layout;
 
   return (
-    <div className="w-full max-w-lg mx-auto flex flex-col items-center mt-4 md:mt-8 px-1 sm:px-0 pb-4">
+    <div className="w-full max-w-lg mx-auto flex flex-col items-center mt-4 md:mt-8 px-1 sm:px-0 pb-4" dir="ltr">
       <div role="group" className="w-full flex justify-center" aria-label="Keyboard row 1">
-        {row1.map(key => <Key key={key} value={key} onKeyPress={onKeyPress} status={keyStatuses[key]} />)}
+        {row1.map(key => <Key key={key} value={key} onKeyPress={onKeyPress} status={keyStatuses[key.toUpperCase()]} />)}
       </div>
       <div role="group" className="w-full flex justify-center" aria-label="Keyboard row 2">
-        {row2.map(key => <Key key={key} value={key} onKeyPress={onKeyPress} status={keyStatuses[key]} />)}
+        {row2.map(key => <Key key={key} value={key} onKeyPress={onKeyPress} status={keyStatuses[key.toUpperCase()]} />)}
       </div>
       <div role="group" className="w-full flex justify-center" aria-label="Keyboard row 3">
         <Key value="Enter" onKeyPress={onKeyPress} flex={1.5} isSpecial />
-        {row3.map(key => <Key key={key} value={key} onKeyPress={onKeyPress} status={keyStatuses[key]} />)}
+        {row3.map(key => <Key key={key} value={key} onKeyPress={onKeyPress} status={keyStatuses[key.toUpperCase()]} />)}
         <Key value="Backspace" onKeyPress={onKeyPress} flex={1.5} isSpecial />
       </div>
     </div>

@@ -1,7 +1,7 @@
-import { GameStats } from '../types.ts';
+import { GameStats, AppSettings } from '../types.ts';
 import { MAX_GUESSES } from '../../constants.ts';
 
-const STATS_KEY = 'islamicWordleStats';
+const getStatsKey = (language: AppSettings['language']) => `islamicWordleStats_${language}`;
 
 /**
  * Provides a default, empty stats object.
@@ -17,12 +17,12 @@ const getDefaultStats = (): GameStats => ({
 });
 
 /**
- * Loads the user's game statistics from localStorage.
+ * Loads the user's game statistics from localStorage for a specific language.
  * If no stats are found, it returns a default stats object.
  */
-export const loadStats = (): GameStats => {
+export const loadStats = (language: AppSettings['language']): GameStats => {
   try {
-    const statsJson = localStorage.getItem(STATS_KEY);
+    const statsJson = localStorage.getItem(getStatsKey(language));
     const savedStats = statsJson ? JSON.parse(statsJson) : getDefaultStats();
     // Ensure guessDistribution is fully populated for compatibility with older versions.
     const defaultDist = getDefaultStats().guessDistribution;
@@ -35,25 +35,27 @@ export const loadStats = (): GameStats => {
 };
 
 /**
- * Saves the user's game statistics to localStorage.
+ * Saves the user's game statistics to localStorage for a specific language.
  * @param stats The stats object to save.
+ * @param language The language for which to save the stats.
  */
-export const saveStats = (stats: GameStats) => {
+export const saveStats = (stats: GameStats, language: AppSettings['language']) => {
   try {
-    localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+    localStorage.setItem(getStatsKey(language), JSON.stringify(stats));
   } catch (error) {
     console.error("Failed to save stats:", error);
   }
 };
 
 /**
- * Updates the user's statistics after a daily challenge game is completed.
+ * Updates the user's statistics after a daily challenge game is completed for a specific language.
  * @param isWin Whether the user won the game.
  * @param guessCount The number of guesses it took to win.
+ * @param language The language of the completed game.
  * @returns The updated stats object.
  */
-export const updateStats = (isWin: boolean, guessCount: number): GameStats => {
-    const stats = loadStats();
+export const updateStats = (isWin: boolean, guessCount: number, language: AppSettings['language']): GameStats => {
+    const stats = loadStats(language);
 
     // Statistics are only tracked for the daily challenge mode.
     stats.gamesPlayed += 1;
@@ -69,6 +71,6 @@ export const updateStats = (isWin: boolean, guessCount: number): GameStats => {
         stats.currentStreak = 0;
     }
     
-    saveStats(stats);
+    saveStats(stats, language);
     return stats;
 };

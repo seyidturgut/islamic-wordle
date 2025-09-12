@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSettings } from '../../hooks/useSettings.ts';
-import type { AppTheme, GameStats } from '../../types.ts';
+import type { AppTheme, GameStats, AppSettings } from '../../types.ts';
 import type { Screen } from '../../../App.tsx';
 import { MIN_WORD_LENGTH, MAX_WORD_LENGTH } from '../../../constants.ts';
 import { loadStats } from '../../services/statsService.ts';
@@ -18,15 +18,15 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({ navigate }) => {
 
 
   useEffect(() => {
-    setStats(loadStats());
-  }, []);
+    setStats(loadStats(settings.language));
+  }, [settings.language]);
 
   const handleThemeChange = (theme: AppTheme) => {
     updateSettings({ ...settings, theme });
   };
   
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    updateSettings({ ...settings, language: e.target.value as 'tr' | 'en' });
+    updateSettings({ ...settings, language: e.target.value as AppSettings['language'] });
   };
   
   const handleWordLengthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,7 +46,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({ navigate }) => {
     <div className="w-full max-w-2xl mx-auto p-4 h-full flex flex-col">
       <header className="flex justify-between items-center mb-6">
         <button onClick={() => navigate('home')} className={`p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 ${focusRingClasses}`}>
-           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 rtl-flip" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
         </button>
         <h1 className="text-2xl font-bold">{t('settings')}</h1>
         <div className="w-8"></div>
@@ -77,6 +77,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({ navigate }) => {
               <select id="language-select" value={settings.language} onChange={handleLanguageChange} className={`bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md p-2 ${focusRingClasses}`}>
                   <option value="tr">Türkçe</option>
                   <option value="en">English</option>
+                  <option value="ar">العربية</option>
               </select>
           </div>
 

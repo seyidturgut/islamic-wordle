@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { GameBoard } from '../../../components/GameBoard';
 import { Keyboard } from '../../../components/Keyboard';
 import { GameModal } from '../../../components/GameModal';
@@ -15,18 +15,23 @@ import * as dailyChallengeService from '../../services/dailyChallengeService';
 import * as statsService from '../../services/statsService';
 import { playSound } from '../../services/soundService';
 import { tr_words } from '../../seed/tr_extended';
+import { en_words } from '../../seed/en_extended';
+import { ar_words } from '../../seed/ar_extended';
+import { AdsenseAd } from '../../components/AdsenseAd';
 
 interface GameScreenProps {
   gameMode: GameMode;
   onBack: () => void;
 }
 
-// Create a Set for efficient word validation
-const wordList = new Set(tr_words.map(w => w.toUpperCase()));
-
 const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
   const { settings, t } = useSettings();
-  const { wordLength } = settings;
+  const { wordLength, language } = settings;
+
+  const wordList = useMemo(() => {
+    const words = language === 'en' ? en_words : language === 'ar' ? ar_words : tr_words;
+    return new Set(words.map(w => w.toUpperCase()));
+  }, [language]);
 
   const [solution, setSolution] = useState('');
   const [guesses, setGuesses] = useState<Guess[]>([]);
@@ -43,7 +48,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
   const [isSummaryModalOpen, setSummaryModalOpen] = useState(false);
   const [isHowToPlayOpen, setHowToPlayOpen] = useState(false);
 
-  const [stats, setStats] = useState<GameStats>(statsService.loadStats());
+  const [stats, setStats] = useState<GameStats>(statsService.loadStats(language));
   const [announcement, setAnnouncement] = useState('');
 
   const startNewGame = useCallback((newWord: string) => {
@@ -66,8 +71,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
     
     setIsLoading(true);
     if (gameMode === 'daily') {
-      const dailyState = dailyChallengeService.loadDailyChallengeState();
-      const dailyWord = dailyChallengeService.getDailyWord(wordLength);
+      const dailyState = dailyChallengeService.loadDailyChallengeState(language);
+      const dailyWord = dailyChallengeService.getDailyWord(wordLength, language);
 
       if (dailyState && dailyState.solution.toUpperCase() === dailyWord.toUpperCase()) {
         setSolution(dailyState.solution.toUpperCase());
@@ -98,9 +103,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
         startNewGame(dailyWord);
       }
     } else { // practice mode
-      startNewGame(fetchWordForGame(wordLength));
+      startNewGame(fetchWordForGame(wordLength, language));
     }
-  }, [gameMode, wordLength, startNewGame]);
+    setStats(statsService.loadStats(language));
+  }, [gameMode, wordLength, startNewGame, language]);
 
 
   const showToast = (message: string, duration = 1500) => {
@@ -199,8 +205,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
         }
 
         if (gameMode === 'daily' && (isWin || isLoss)) {
-            dailyChallengeService.saveDailyChallengeState(solution, newGuesses, isWin ? 'won' : 'lost');
-            const updatedStats = statsService.updateStats(isWin, newGuesses.length);
+            dailyChallengeService.saveDailyChallengeState(solution, newGuesses, isWin ? 'won' : 'lost', language);
+            const updatedStats = statsService.updateStats(isWin, newGuesses.length, language);
             setStats(updatedStats);
         }
 
@@ -220,12 +226,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
       return;
     }
 
-    const isValidKey = /^[a-zA-ZğüşıöçĞÜŞİÖÇ]$/.test(key);
+    const isValidKey = /^[a-zA-ZğüşıöçĞÜŞİÖÇ\u0600-\u06FF]$/.test(key);
     if (isValidKey && currentGuess.length < wordLength) {
-      setCurrentGuess(prev => prev + key.toLocaleUpperCase(settings.language));
+      setCurrentGuess(prev => prev + key.toUpperCase());
       playSound('keyPress', settings.hapticsEnabled);
     }
-  }, [gameState, isRevealing, currentGuess, wordLength, settings, t, submitGuess]);
+  }, [gameState, isRevealing, currentGuess, wordLength, settings, t, submitGuess, wordList]);
 
   useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
@@ -250,7 +256,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
 
   const handlePlayAgain = () => {
     setIsLoading(true);
-    startNewGame(fetchWordForGame(wordLength));
+    startNewGame(fetchWordForGame(wordLength, language));
   };
   
   if (isLoading) {
@@ -276,6 +282,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
         />
       </main>
       <Keyboard onKeyPress={handleKeyPress} keyStatuses={keyStatuses} />
+      <AdsenseAd />
       {gameMode === 'practice' && (
         <GameModal
           isOpen={isPracticeModalOpen}
