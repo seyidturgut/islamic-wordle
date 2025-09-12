@@ -58,6 +58,10 @@
             'glow': {
               '0%, 100%': { filter: 'drop-shadow(0 0 3px #fef08a)' },
               '50%': { filter: 'drop-shadow(0 0 12px #facc15)' },
+            },
+            'fade-to-gray': {
+              'from': { filter: 'grayscale(0)' },
+              'to': { filter: 'grayscale(100%)' },
             }
           },
           animation: {
@@ -69,6 +73,7 @@
             'jump': 'jump 0.8s ease-out',
             'glow': 'glow 2.5s ease-in-out infinite',
             'shimmer': 'shimmer 1.5s linear infinite',
+            'fade-to-gray': 'fade-to-gray 0.6s ease-out forwards',
           }
         }
       }

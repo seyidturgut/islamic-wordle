@@ -20,9 +20,10 @@ export const GameBoard: React.FC<GameBoardProps> = ({ guesses, currentGuess, wor
     : [];
   
   const currentRowClass = shakeCurrentRow ? 'animate-shake' : '';
+  const gameLostClass = gameState === 'lost' ? 'animate-fade-to-gray' : '';
 
   return (
-    <div className="flex flex-col gap-1.5 p-2 md:p-4">
+    <div className={`flex flex-col gap-1.5 p-2 md:p-4 ${gameLostClass}`}>
       {guesses.map((guess, i) => (
         <div key={i} className="flex gap-1.5 justify-center">
           {guess.letters.map((letter, j) => (

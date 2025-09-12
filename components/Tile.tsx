@@ -54,7 +54,7 @@ export const Tile: React.FC<TileProps> = ({ letter, status = LetterStatus.Defaul
   const backFaceClasses = `${statusStyles[status]} rounded-md`;
   
   const isRevealed = isSubmitted && !isRevealing;
-  const winningAnimationClass = isWinningTile && isRevealed ? 'animate-bounce-short' : '';
+  const winningAnimationClass = isWinningTile && isRevealed ? 'animate-jump animate-glow' : '';
   const tileContainerClasses = `tile ${isRevealing ? 'is-revealing' : ''} ${isRevealed ? 'is-revealed' : ''} ${winningAnimationClass}`;
 
   const animationStyle: React.CSSProperties = {};

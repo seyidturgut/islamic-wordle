@@ -48,6 +48,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
   const [isPracticeModalOpen, setPracticeModalOpen] = useState(false);
   const [isSummaryModalOpen, setSummaryModalOpen] = useState(false);
   const [isHowToPlayOpen, setHowToPlayOpen] = useState(false);
+  const [shakeScreen, setShakeScreen] = useState(false);
 
   const [stats, setStats] = useState<GameStats>(statsService.loadStats(language));
   const [announcement, setAnnouncement] = useState('');
@@ -200,6 +201,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
             setGameState('lost');
             setAnnouncement(prev => `${prev}. ${t('modalLossTitle')}. ${t('modalSolutionIs')} ${solution.word}`);
             playSound('lose', settings.hapticsEnabled);
+            setShakeScreen(true);
+            setTimeout(() => setShakeScreen(false), 600);
         } else {
             playSound('guess', settings.hapticsEnabled);
         }
@@ -264,7 +267,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameMode, onBack }) => {
   }
 
   return (
-    <div className="flex flex-col flex-grow w-full max-w-lg mx-auto">
+    <div className={`flex flex-col flex-grow w-full max-w-lg mx-auto ${shakeScreen ? 'animate-shake' : ''}`}>
       <div className="absolute w-px h-px overflow-hidden" style={{clip: 'rect(0 0 0 0)', clipPath: 'inset(50%)'}} aria-live="polite" aria-atomic="true">
         {announcement}
       </div>
