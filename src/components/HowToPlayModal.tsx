@@ -1,4 +1,5 @@
 
+
 import React, { useRef } from 'react';
 import { useSettings } from '../hooks/useSettings.ts';
 import { Tile } from '../../components/Tile.tsx';
@@ -33,7 +34,7 @@ export const HowToPlayModal: React.FC<HowToPlayModalProps> = ({ isOpen, onClose 
   // FIX: The `useSettings` hook now provides the `t` function.
   const { t } = useSettings();
   const modalRef = useRef<HTMLDivElement>(null);
-  const focusRingClasses = "focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-800";
+  const focusRingClasses = "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E96306] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-[#2A2A2A]";
 
   useFocusTrap(modalRef, isOpen);
 
@@ -49,7 +50,7 @@ export const HowToPlayModal: React.FC<HowToPlayModalProps> = ({ isOpen, onClose 
     >
       <div 
         ref={modalRef}
-        className="bg-gray-50 dark:bg-gray-800 rounded-lg p-5 shadow-2xl max-w-md w-full text-black dark:text-white animate-slide-up"
+        className="bg-gray-50 dark:bg-[#2A2A2A] rounded-lg p-5 shadow-2xl max-w-md w-full text-black dark:text-[#F5F5F5] animate-slide-up"
         onClick={e => e.stopPropagation()} // Prevent closing when clicking inside
       >
         <div className="flex justify-between items-center mb-4">
@@ -61,7 +62,7 @@ export const HowToPlayModal: React.FC<HowToPlayModalProps> = ({ isOpen, onClose 
             </button>
         </div>
         
-        <div className="text-base text-start space-y-3 mb-6">
+        <div className="text-base text-start space-y-3 mb-6 leading-relaxed">
             <p>{t('howToPlayIntro1')}</p>
             <p>{t('howToPlayIntro2')}</p>
             <p>{t('howToPlayIntro3')}</p>
@@ -91,7 +92,7 @@ export const HowToPlayModal: React.FC<HowToPlayModalProps> = ({ isOpen, onClose 
 
         <button
           onClick={onClose}
-          className={`mt-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 w-full ${focusRingClasses}`}
+          className={`mt-4 bg-[#E96306] hover:brightness-110 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 w-full ${focusRingClasses}`}
         >
           {t('startPlaying')}
         </button>

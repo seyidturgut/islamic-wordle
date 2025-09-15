@@ -19,19 +19,20 @@ const Key: React.FC<{
   isArabic: boolean;
   specialKeyText?: string;
 }> = ({ value, status, onKeyPress, flex = 1, isSpecial, isArabic, specialKeyText }) => {
-  const baseClasses = `h-12 rounded-md font-bold flex items-center justify-center m-0.5 sm:m-1 cursor-pointer transition-colors duration-200 select-none`;
-  const focusClasses = "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-emerald-500 dark:focus-visible:ring-offset-gray-900";
+  const baseClasses = `h-12 rounded-md font-bold flex items-center justify-center m-1 cursor-pointer transition-all duration-100 select-none`;
+  const focusClasses = "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#E96306] dark:focus-visible:ring-offset-[#121212]";
+  const pressClasses = "active:scale-95 active:brightness-90";
   const statusClasses = {
-    [LetterStatus.Correct]: 'bg-emerald-600 text-white border-transparent',
-    [LetterStatus.Present]: 'bg-amber-500 text-white border-transparent',
-    [LetterStatus.Absent]: 'bg-gray-800 dark:bg-gray-700 text-white border-transparent',
+    [LetterStatus.Correct]: 'bg-[#E96306] text-white border-transparent',
+    [LetterStatus.Present]: 'bg-[#FFC857] text-gray-900 border-transparent',
+    [LetterStatus.Absent]: 'bg-[#444444] text-white border-transparent',
   };
   const defaultClasses = isSpecial 
-    ? 'bg-gray-400 dark:bg-gray-600 hover:bg-gray-500 dark:hover:bg-gray-500 text-white'
-    : 'bg-gray-300 dark:bg-gray-500 hover:bg-gray-400 dark:hover:bg-gray-400 text-black dark:text-white';
+    ? 'bg-gray-400 dark:bg-[#3A3A3A] hover:bg-gray-500 dark:hover:bg-[#444444] text-white'
+    : 'bg-gray-300 dark:bg-[#2A2A2A] hover:bg-gray-400 dark:hover:bg-[#333333] text-black dark:text-[#F5F5F5]';
 
 
-  const classes = `${baseClasses} ${status !== undefined ? statusClasses[status] : defaultClasses} ${focusClasses}`;
+  const classes = `${baseClasses} ${status !== undefined ? statusClasses[status] : defaultClasses} ${focusClasses} ${pressClasses}`;
   
   let content;
   let textAndCaseClasses: string;

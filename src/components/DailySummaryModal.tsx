@@ -75,13 +75,13 @@ export const DailySummaryModal: React.FC<DailySummaryModalProps> = ({
     >
       <div
         ref={modalRef}
-        className="bg-gray-50 dark:bg-gray-800 rounded-lg p-5 shadow-2xl max-w-md w-full text-black dark:text-white flex flex-col max-h-[90vh] animate-slide-up"
+        className="bg-gray-50 dark:bg-[#2A2A2A] rounded-lg p-5 shadow-2xl max-w-md w-full text-black dark:text-[#F5F5F5] flex flex-col max-h-[90vh] animate-slide-up"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
           <h2 id="summary-modal-title" className="text-2xl font-bold">{t('statistics')}</h2>
           <button onClick={onClose} className="text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white" aria-label={t('close')}>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0-0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -90,7 +90,7 @@ export const DailySummaryModal: React.FC<DailySummaryModalProps> = ({
         <div className="overflow-y-auto pr-2">
             <div className="text-center mb-4">
                 <p className="text-lg">{t('modalSolutionIs')}</p>
-                <p className="text-2xl font-bold uppercase tracking-widest text-emerald-500">{solution}</p>
+                <p className="text-2xl font-bold uppercase tracking-widest text-[#E96306]">{solution}</p>
                 <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{solutionDefinition}</p>
             </div>
 
@@ -110,7 +110,7 @@ export const DailySummaryModal: React.FC<DailySummaryModalProps> = ({
         <div className="mt-auto pt-4 flex items-center justify-center">
           <button
             onClick={handleShare}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 w-full"
+            className="bg-[#E96306] hover:brightness-110 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 w-full"
           >
             {t('share')}
           </button>

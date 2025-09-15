@@ -20,16 +20,16 @@ export const Tile: React.FC<TileProps> = ({ letter, status = LetterStatus.Defaul
   const { t } = useSettings();
 
   const statusStyles = {
-    [LetterStatus.Correct]: 'bg-emerald-600 border-emerald-600 text-white',
-    [LetterStatus.Present]: 'bg-amber-500 border-amber-500 text-white',
-    [LetterStatus.Absent]: 'bg-gray-700 border-gray-700 text-white',
+    [LetterStatus.Correct]: 'bg-[#E96306] border-[#E96306] text-white',
+    [LetterStatus.Present]: 'bg-[#FFC857] border-[#FFC857] text-gray-900',
+    [LetterStatus.Absent]: 'bg-[#444444] border-[#444444] text-white',
     [LetterStatus.Default]: 'bg-transparent border-gray-500 text-white dark:text-white',
   };
   
   const staticStatusStyles = {
-    [LetterStatus.Correct]: 'bg-emerald-600 border-transparent text-white',
-    [LetterStatus.Present]: 'bg-amber-500 border-transparent text-white',
-    [LetterStatus.Absent]: 'bg-gray-700 border-transparent text-white',
+    [LetterStatus.Correct]: 'bg-[#E96306] border-transparent text-white',
+    [LetterStatus.Present]: 'bg-[#FFC857] border-transparent text-gray-900',
+    [LetterStatus.Absent]: 'bg-[#444444] border-transparent text-white',
     [LetterStatus.Default]: 'bg-transparent border-gray-500 text-white dark:text-white',
   };
 

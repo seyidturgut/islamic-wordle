@@ -26,10 +26,9 @@
               '100%': { transform: 'scale(1)', opacity: '1' },
             },
             'shake': {
-                '10%, 90%': { transform: 'translateX(-1px)' },
-                '20%, 80%': { transform: 'translateX(2px)' },
-                '30%, 50%, 70%': { transform: 'translateX(-4px)' },
-                '40%, 60%': { transform: 'translateX(4px)' },
+                '0%, 100%': { transform: 'translateX(0)' },
+                '25%': { transform: 'translateX(-5px)' },
+                '75%': { transform: 'translateX(5px)' },
             },
             'fade-in': {
                 'from': { opacity: '0' },
@@ -56,8 +55,8 @@
               '100%': { transform: 'translateX(100%) skewX(-20deg)' },
             },
             'glow': {
-              '0%, 100%': { filter: 'drop-shadow(0 0 3px #fef08a)' },
-              '50%': { filter: 'drop-shadow(0 0 12px #facc15)' },
+              '0%, 100%': { filter: 'drop-shadow(0 0 3px #E96306)' },
+              '50%': { filter: 'drop-shadow(0 0 12px #E96306)' },
             },
             'fade-to-gray': {
               'from': { filter: 'grayscale(0)' },
@@ -66,11 +65,11 @@
           },
           animation: {
             'pop-in': 'pop-in 0.2s ease-out',
-            'shake': 'shake 0.6s cubic-bezier(.36,.07,.19,.97) both',
-            'fade-in': 'fade-in 0.3s ease-out forwards',
+            'shake': 'shake 0.15s linear both',
+            'fade-in': 'fade-in 0.2s ease-out forwards',
             'slide-up': 'slide-up 0.4s ease-out forwards',
             'bounce-short': 'bounce-short 0.5s ease-in-out',
-            'jump': 'jump 0.8s ease-out',
+            'jump': 'jump 0.6s ease-out',
             'glow': 'glow 2.5s ease-in-out infinite',
             'shimmer': 'shimmer 1.5s linear infinite',
             'fade-to-gray': 'fade-to-gray 0.6s ease-out forwards',
@@ -81,11 +80,21 @@
   </script>
   <style>
     :root {
-      --tile-size: clamp(50px, 15vw, 65px);
+      --tile-size: clamp(48px, 14vw, 64px);
       --tile-gap: 6px;
+    }
+    html, body, #root {
+        height: 100%;
+        margin: 0;
+        padding: 0;
     }
     body {
         overscroll-behavior: none; /* Disables pull-to-refresh but allows scrolling */
+        -webkit-tap-highlight-color: transparent; /* Remove tap highlight for cleaner UI */
+    }
+    body.dark {
+        background: linear-gradient(to bottom, #121212, #0D0D0D);
+        color: #F5F5F5;
     }
     .tile {
         width: var(--tile-size);
@@ -104,7 +113,7 @@
         width: 100%;
         height: 100%;
         text-align: center;
-        transition: transform 0.6s;
+        transition: transform 0.4s cubic-bezier(0.45, 0, 0.55, 1);
         transform-style: preserve-3d;
     }
     .tile.is-revealing .tile-inner,
@@ -130,6 +139,15 @@
     html[lang="ar"] {
       font-family: 'Cairo', sans-serif;
     }
+    /* Respect user's motion preferences */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
   </style>
   <script type="importmap">
   {
@@ -144,7 +162,7 @@
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9655763725113422"
      crossorigin="anonymous"></script>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 text-black dark:text-white">
+<body class="bg-gray-50 dark:bg-transparent text-black dark:text-[#F5F5F5]">
   <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
   <script>

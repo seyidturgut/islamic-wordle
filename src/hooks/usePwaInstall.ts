@@ -26,6 +26,12 @@ export const usePwaInstall = () => {
   const [isInstallVisible, setIsInstallVisible] = useState(false);
 
   useEffect(() => {
+    // Don't show the prompt if already running as a PWA
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+    if (isStandalone) {
+      return;
+    }
+    
     const handleBeforeInstallPrompt = (event: Event) => {
       event.preventDefault();
       const castedEvent = event as BeforeInstallPromptEvent;

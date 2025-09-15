@@ -34,18 +34,18 @@ export const GameModal: React.FC<GameModalProps> = ({ isOpen, isWin, solution, s
       aria-modal="true"
       aria-labelledby="game-modal-title"
     >
-      <div ref={modalRef} className="bg-gray-800 rounded-lg p-6 md:p-8 text-center shadow-2xl max-w-sm w-full">
+      <div ref={modalRef} className="bg-gray-100 dark:bg-[#2A2A2A] rounded-lg p-6 md:p-8 text-center shadow-2xl max-w-sm w-full dark:text-[#F5F5F5]">
         <h2 id="game-modal-title" className="text-2xl md:text-3xl font-bold mb-4">
           {isWin ? t('modalWinTitle') : t('modalLossTitle')}
         </h2>
         <div className="mb-6">
             <p className="mb-2 text-lg">{t('modalSolutionIs')}</p>
-            <p className="text-2xl font-bold uppercase tracking-widest text-emerald-400">{solution}</p>
-            {isWin && <p className="mt-2 text-base text-gray-300">{solutionDefinition}</p>}
+            <p className="text-2xl font-bold uppercase tracking-widest text-[#E96306]">{solution}</p>
+            {isWin && <p className="mt-2 text-base text-gray-600 dark:text-gray-400">{solutionDefinition}</p>}
         </div>
         <button
           onClick={handleClick}
-          className={`bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-800 ${isBouncing ? 'animate-bounce-short' : ''}`}
+          className={`bg-[#E96306] hover:brightness-110 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E96306] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-[#2A2A2A] ${isBouncing ? 'animate-bounce-short' : ''}`}
         >
           {t('playAgain')}
         </button>

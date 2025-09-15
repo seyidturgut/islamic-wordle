@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import GameScreen from './src/features/game/GameScreen';
 import SettingsScreen from './src/features/settings/SettingsScreen';
@@ -37,8 +36,13 @@ const App: React.FC = () => {
         }
     };
 
+    const isGameScreen = currentScreen === 'game';
+    const containerClasses = `bg-gray-50 dark:bg-transparent text-black dark:text-[#F5F5F5] w-full font-sans flex flex-col ${
+        isGameScreen ? 'h-[100dvh] overflow-hidden' : 'min-h-screen'
+    }`;
+
     return (
-        <div className="bg-gray-50 dark:bg-gray-900 text-black dark:text-white min-h-screen w-full font-sans flex flex-col">
+        <div className={containerClasses}>
            {renderScreen()}
            {isInstallVisible && (
               <InstallPwaPrompt

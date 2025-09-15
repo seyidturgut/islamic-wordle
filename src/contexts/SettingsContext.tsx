@@ -90,6 +90,12 @@ const translations: Record<string, Record<string, string>> = {
     badge_streak30_desc: 'Achieved a 30-day streak.',
     badge_perfect_name: 'Divine Inspiration',
     badge_perfect_desc: 'Guessed the word in a single try.',
+    // PWA Prompt
+    pwaInstallTitle: 'Install for the Full Experience',
+    pwaInstallBody: 'Offline access and more!',
+    pwaInstallButton: 'Install',
+    pwaInstallTitleIos: 'Install as an App',
+    pwaInstallBodyIos: 'Tap the "Share" <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mx-1" viewBox="0 0 20 20" fill="currentColor"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.875-1.025l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" /></svg> icon and then "Add to Home Screen".',
   },
   tr: {
     // Modal titles
@@ -176,6 +182,12 @@ const translations: Record<string, Record<string, string>> = {
     badge_streak30_desc: '30 günlük bir seriye ulaştın.',
     badge_perfect_name: 'İlahi İlham',
     badge_perfect_desc: 'Kelimeyi tek denemede bildin.',
+    // PWA Prompt
+    pwaInstallTitle: 'Tam Deneyim için Yükle',
+    pwaInstallBody: 'Çevrimdışı erişim ve daha fazlası!',
+    pwaInstallButton: 'Yükle',
+    pwaInstallTitleIos: 'Uygulama Gibi Yükle',
+    pwaInstallBodyIos: '"Paylaş" <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mx-1" viewBox="0 0 20 20" fill="currentColor"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.875-1.025l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" /></svg> simgesine ve sonra "Ana Ekrana Ekle"ye dokun.',
   },
   ar: {
     // Modal titles
@@ -262,6 +274,12 @@ const translations: Record<string, Record<string, string>> = {
     badge_streak30_desc: 'أحرزت سلسلة انتصارات لـ 30 يومًا.',
     badge_perfect_name: 'الإلهام الإلهي',
     badge_perfect_desc: 'خمنت الكلمة من المحاولة الأولى.',
+    // PWA Prompt
+    pwaInstallTitle: 'ثبّت للحصول على التجربة الكاملة',
+    pwaInstallBody: 'وصول بدون انترنت والمزيد!',
+    pwaInstallButton: 'تثبيت',
+    pwaInstallTitleIos: 'تثبيت كتطبيق',
+    pwaInstallBodyIos: 'اضغط على أيقونة "مشاركة" <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mx-1" viewBox="0 0 20 20" fill="currentColor"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.875-1.025l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" /></svg> ثم "إضافة إلى الشاشة الرئيسية".',
   },
 };
 interface SettingsContextType {
